@@ -10,6 +10,11 @@ export default function Menu() {
   return (
     <>
       <Navbar />
+      <div className="max-w-2xl mx-auto pt-3 px-4">
+        <div className="flex items-center mx-auto px-4 py-2 bg-amber-700 text-amber-100 rounded-2xl">
+          <span className="flex-1 ml-2 font-medium text-[13px] text-center">التطبيق في وضع تجربة الشكل فقط</span>
+        </div>
+      </div>
       <Notification />
       <InstallApp />
       <Offer />
