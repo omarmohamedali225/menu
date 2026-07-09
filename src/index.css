@@ -1,0 +1,14 @@
+@import url("https://fonts.googleapis.com/css2?family=Alexandria:wght@100..900&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --font-main: "Alexandria", sans-serif;
+  --color-main: #fffbeb;
+  --color-accent: #fcd34d;
+}
+
+@layer base {
+  html {
+    font-family: var(--font-main);
+  }
+}
