@@ -1,11 +1,12 @@
 import OfflineMode from "@/components/Internet";
-import Menu from "@/pages/Menu";
+import { router } from "@/routes/router";
+import { RouterProvider } from "react-router";
 
 function App() {
   return (
     <div className="bg-main min-h-screen">
       <OfflineMode />
-      <Menu />
+      <RouterProvider router={router} />
     </div>
   );
 }

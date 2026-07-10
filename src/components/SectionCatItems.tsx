@@ -7,7 +7,7 @@ type SectionTypes = {
 
 export default function SectionCatItems({ catName }: SectionTypes) {
   return (
-    <div className="max-w-2xl mx-auto py-3 px-4">
+    <>
       <Cat catName={catName} />
 
       <div className="flex flex-col gap-2">
@@ -15,7 +15,7 @@ export default function SectionCatItems({ catName }: SectionTypes) {
           <Item data={e} key={i} />
         ))}
       </div>
-    </div>
+    </>
   );
 }
 

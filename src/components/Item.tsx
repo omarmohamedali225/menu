@@ -1,12 +1,21 @@
 import Button from "@/components/Button";
 import { useState } from "react";
-
-
+import { motion } from "motion/react";
 
 export default function Item({ data }: any) {
   const [count, setCount] = useState(0);
   return (
-    <div className="bg-white flex justify-between gap-4 p-3 overflow-hidden flex-wrap">
+    <motion.div
+      initial={{ opacity: 0, marginTop: "10px" }}
+      whileInView={{ opacity: 1, marginTop: 0 }}
+      viewport={{ margin: "-20px" }}
+      transition={{
+        type: "spring",
+        stiffness: 60,
+        ease: "anticipate",
+      }}
+      className="bg-white flex justify-between gap-4 p-3 overflow-hidden flex-wrap"
+    >
       <div className="flex flex-col flex-1">
         <div className="h-full">
           <h1 className="text-sm font-medium">{data?.name}</h1>
@@ -45,6 +54,6 @@ export default function Item({ data }: any) {
           alt=""
         />
       </div>
-    </div>
+    </motion.div>
   );
 }

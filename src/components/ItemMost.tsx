@@ -1,8 +1,18 @@
 import Button from "@/components/Button";
+import { motion } from "motion/react";
+import { useTranslation } from "react-i18next";
+import { Link } from "react-router";
 
-export default function ItemMost() {
+export default function ItemMost({ product, onclick }: any) {
+  const { t } = useTranslation();
+
   return (
-    <div className="bg-white rounded-2xl select-none group border border-amber-100 shadow">
+    <motion.div
+      onClick={onclick}
+      initial={{ opacity: 0, scaleY: 0 }}
+      whileInView={{ opacity: 1, scaleY: 1 }}
+      className="bg-white rounded-2xl select-none group border border-amber-100 shadow"
+    >
       <div className="relative overflow-hidden rounded-tl-2xl rounded-tr-2xl">
         <img
           src="/test.webp"
@@ -17,12 +27,15 @@ export default function ItemMost() {
         </span>
       </div>
       <div className="p-2">
-        <h1 className="text-sm font-bold">Falafel</h1>
+        <h1 className="text-sm line-clamp-2 font-bold">{product.name}</h1>
+        <p className="text-xs text-[#92400e99] line-clamp-2 tracking-wider">
+          {product.description}
+        </p>
         <h2 className="text-sm text-amber-700">19.99 egp</h2>
         <div className="flex justify-end">
-          <Button text="Add to Cart" />
+          <Button text={t("addToCart")} />
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

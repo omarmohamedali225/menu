@@ -47,14 +47,12 @@ export default function Notifications() {
   if (!show) return null;
 
   return (
-    <div className="max-w-2xl mx-auto pt-3 px-4">
-      <div className="flex items-center mx-auto px-4 py-2 bg-red-700 text-amber-100 rounded-2xl">
-        <Bell size={18} />
-        <span className="flex-1 ml-2 font-medium text-[13px]">
-          Get notified about new items and offers!
-        </span>
-        <Button text="Subscribe" onClick={handlePermission} />
-      </div>
+    <div className="flex items-center mx-auto px-4 py-2 bg-red-700 text-amber-100 rounded-2xl">
+      <Bell size={18} />
+      <span className="flex-1 ml-2 font-medium text-[13px]">
+        Get notified about new items and offers!
+      </span>
+      <Button text="Subscribe" onClick={handlePermission} />
     </div>
   );
 }
