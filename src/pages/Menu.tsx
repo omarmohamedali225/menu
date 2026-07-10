@@ -4,7 +4,6 @@ import Offer from "@/components/Offer";
 import SectionCatItems from "@/components/SectionCatItems";
 // import TabsCat from "@/components/TabsCat";
 import InstallApp from "@/components/InstallApp";
-import Details from "@/components/Details";
 
 export default function Menu() {
   return (

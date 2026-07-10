@@ -4,7 +4,7 @@ import ItemMost from "@/components/ItemMost";
 import { useState } from "react";
 
 export default function Most() {
-  const [product, setProduct] = useState(null);
+  const [product, setProduct] = useState<any>(null);
   return (
     <>
       <Cat catName="Most Ordered 🔥" />
