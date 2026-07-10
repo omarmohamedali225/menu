@@ -1,7 +1,6 @@
 import Button from "@/components/Button";
 import { motion } from "motion/react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router";
 
 export default function ItemMost({ product, onclick }: any) {
   const { t } = useTranslation();

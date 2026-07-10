@@ -71,7 +71,7 @@ export default function Cart() {
     </div>
   );
 }
-
+/*
 function isEmpty() {
   return (
     <div className="flex justify-center items-center h-full">
@@ -79,3 +79,4 @@ function isEmpty() {
     </div>
   );
 }
+*/
