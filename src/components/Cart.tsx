@@ -24,7 +24,7 @@ export default function Cart() {
             Your Order
           </h1>
           <span onClick={handlerClose}>
-            <X className="text-amber-700 cursor-pointer" />
+            <X className="text-amber-700 cursor-pointer " />
           </span>
         </div>
         <div className="h-full px-4">
