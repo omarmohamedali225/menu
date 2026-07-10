@@ -66,6 +66,7 @@ export default function Cart() {
           </div>
           <hr />
           <h1>تجربة لم يكتمل بعد</h1>
+          <h1>Sooooon</h1>
         </div>
       </motion.div>
     </div>
