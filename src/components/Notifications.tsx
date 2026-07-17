@@ -31,39 +31,40 @@ export default function Notifications() {
   // }, []);
 
   async function handlePermission() {
-    setMsg('جاري التفعيل')
-    setShow(true)
+  try {
+    setMsg("request permission");
+
     const permission = await Notification.requestPermission();
+    console.log("permission:", permission);
 
     if (permission !== "granted") {
-      // setShow(false);
-      setMsg(
-        "Notifications are turned off. Enable them from your browser settings.",
-      );
+      setMsg("Permission denied");
       return;
     }
-    setMsg('wait...')
 
-    try {
-      setMsg('جاري تسجيلك')
-      const registration = await navigator.serviceWorker.getRegistration();
-      console.log(registration)
-      
+    setMsg("waiting service worker");
 
-      const token = await getToken(messaging, {
-        vapidKey:
-          "BP1mXtt0FjQAhyefgT3i1aoHWQHcOv49vdBgIJzbwQzEBENBpWZKmJs22sgNq57LlhwxinoTHY2F9X-CVzFaNHo",
-        serviceWorkerRegistration: registration,
-      });
+    const registration = await navigator.serviceWorker.ready;
 
-      setMsg(token)
-      // console.log("FCM Token:", token);
+    console.log("SW ready:", registration);
+    console.log("SW url:", registration.active?.scriptURL);
 
-      // setShow(false);
-    } catch (error) {
-      // console.error("FCM Error:", { code: error?.code, e: error?.message });
-    }
+    setMsg("getting token");
+
+    const token = await getToken(messaging, {
+      vapidKey:
+        "BP1mXtt0FjQAhyefgT3i1aoHWQHcOv49vdBgIJzbwQzEBENBpWZKmJs22sgNq57LlhwxinoTHY2F9X-CVzFaNHo",
+      serviceWorkerRegistration: registration,
+    });
+
+    console.log("TOKEN:", token);
+    setMsg(token || "No token");
+
+  } catch (error) {
+    console.error(error);
+    setMsg("Error: " + String(error));
   }
+}
 
   if (msg) return <Msg title={msg} />;
 
