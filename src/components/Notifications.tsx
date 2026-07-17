@@ -31,40 +31,40 @@ export default function Notifications() {
   // }, []);
 
   async function handlePermission() {
-  try {
-    setMsg("request permission");
+    setShow(true);
+    try {
+      setMsg("request permission");
 
-    const permission = await Notification.requestPermission();
-    console.log("permission:", permission);
+      const permission = await Notification.requestPermission();
+      console.log("permission:", permission);
 
-    if (permission !== "granted") {
-      setMsg("Permission denied");
-      return;
+      if (permission !== "granted") {
+        setMsg("Permission denied");
+        return;
+      }
+
+      setMsg("waiting service worker");
+
+      const registration = await navigator.serviceWorker.ready;
+
+      console.log("SW ready:", registration);
+      console.log("SW url:", registration.active?.scriptURL);
+
+      setMsg("getting token");
+
+      const token = await getToken(messaging, {
+        vapidKey:
+          "BP1mXtt0FjQAhyefgT3i1aoHWQHcOv49vdBgIJzbwQzEBENBpWZKmJs22sgNq57LlhwxinoTHY2F9X-CVzFaNHo",
+        serviceWorkerRegistration: registration,
+      });
+
+      console.log("TOKEN:", token);
+      setMsg(token || "No token");
+    } catch (error) {
+      console.error(error);
+      setMsg("Error: " + String(error));
     }
-
-    setMsg("waiting service worker");
-
-    const registration = await navigator.serviceWorker.ready;
-
-    console.log("SW ready:", registration);
-    console.log("SW url:", registration.active?.scriptURL);
-
-    setMsg("getting token");
-
-    const token = await getToken(messaging, {
-      vapidKey:
-        "BP1mXtt0FjQAhyefgT3i1aoHWQHcOv49vdBgIJzbwQzEBENBpWZKmJs22sgNq57LlhwxinoTHY2F9X-CVzFaNHo",
-      serviceWorkerRegistration: registration,
-    });
-
-    console.log("TOKEN:", token);
-    setMsg(token || "No token");
-
-  } catch (error) {
-    console.error(error);
-    setMsg("Error: " + String(error));
   }
-}
 
   if (msg) return <Msg title={msg} />;
 
