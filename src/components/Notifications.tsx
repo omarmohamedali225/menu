@@ -54,7 +54,7 @@ export default function Notifications() {
       setMsg(token)
       // console.log("FCM Token:", token);
 
-      setShow(false);
+      // setShow(false);
     } catch (error) {
       // console.error("FCM Error:", { code: error?.code, e: error?.message });
     }
