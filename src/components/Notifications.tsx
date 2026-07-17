@@ -31,6 +31,7 @@ export default function Notifications() {
   // }, []);
 
   async function handlePermission() {
+    setMsg('جاري التفعيل')
     const permission = await Notification.requestPermission();
 
     if (permission !== "granted") {
@@ -40,11 +41,12 @@ export default function Notifications() {
       );
       return;
     }
+    setMsg('wait...')
 
     try {
       setMsg('جاري تسجيلك')
       const registration = await navigator.serviceWorker.ready;
-      console.log(registration.active?.scriptURL);
+      
 
       const token = await getToken(messaging, {
         vapidKey:
