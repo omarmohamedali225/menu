@@ -42,6 +42,7 @@ export default function Notifications() {
     }
 
     try {
+      setMsg('جاري تسجيلك')
       const registration = await navigator.serviceWorker.ready;
       console.log(registration.active?.scriptURL);
 
