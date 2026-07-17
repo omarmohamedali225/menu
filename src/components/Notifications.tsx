@@ -46,7 +46,8 @@ export default function Notifications() {
 
     try {
       setMsg('جاري تسجيلك')
-      const registration = await navigator.serviceWorker.ready;
+      const registration = await navigator.serviceWorker.getRegistration();
+      console.log(registration)
       
 
       const token = await getToken(messaging, {
