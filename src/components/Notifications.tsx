@@ -32,6 +32,7 @@ export default function Notifications() {
 
   async function handlePermission() {
     setMsg('جاري التفعيل')
+    setShow(true)
     const permission = await Notification.requestPermission();
 
     if (permission !== "granted") {
