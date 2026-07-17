@@ -1,44 +1,62 @@
 import Button from "@/components/Button";
 import { Bell } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { getToken } from "firebase/messaging";
+import { messaging } from "@/firebase";
 
 export default function Notifications() {
-  const [show, setShow] = useState(false);
+  const [show, setShow] = useState(true);
 
   const [msg, setMsg] = useState<null | string>(null);
 
-  useEffect(() => {
-    if (!("Notification" in window)) {
-      setMsg("Your browser doesn't support notifications.");
-      return;
-    }
-    Notification.requestPermission().then((permission) => {
-      if (permission === "granted") {
-        setShow(false);
-        setMsg(null);
-      }
-      if (permission === "denied") {
-        setShow(false);
-        setMsg(
-          "Notifications are turned off. Enable them to receive the latest updates, new items, and exclusive offers.",
-        );
-      } else if (permission === "default") {
-        setShow(true);
-      }
-    });
-  }, []);
+  // useEffect(() => {
+  //   if (!("Notification" in window)) {
+  //     setMsg("Your browser doesn't support notifications.");
+  //     return;
+  //   }
+  //   Notification.requestPermission().then((permission) => {
+  //     if (permission === "granted") {
+  //       setShow(false);
+  //       setMsg(null);
+  //     }
+  //     if (permission === "denied") {
+  //       setShow(false);
+  //       setMsg(
+  //         "Notifications are turned off. Enable them to receive the latest updates, new items, and exclusive offers.",
+  //       );
+  //     } else if (permission === "default") {
+  //       setShow(true);
+  //     }
+  //   });
+  // }, []);
 
   async function handlePermission() {
-    if (Notification.permission !== "default") return;
-
     const permission = await Notification.requestPermission();
-    if (permission === "granted") {
-      setShow(false);
-    } else {
-      setShow(false);
+
+    if (permission !== "granted") {
+      // setShow(false);
       setMsg(
         "Notifications are turned off. Enable them from your browser settings.",
       );
+      return;
+    }
+
+    try {
+      const registration = await navigator.serviceWorker.ready;
+      console.log(registration.active?.scriptURL);
+
+      const token = await getToken(messaging, {
+        vapidKey:
+          "BP1mXtt0FjQAhyefgT3i1aoHWQHcOv49vdBgIJzbwQzEBENBpWZKmJs22sgNq57LlhwxinoTHY2F9X-CVzFaNHo",
+        serviceWorkerRegistration: registration,
+      });
+
+      setMsg(token)
+      // console.log("FCM Token:", token);
+
+      setShow(false);
+    } catch (error) {
+      // console.error("FCM Error:", { code: error?.code, e: error?.message });
     }
   }
 
