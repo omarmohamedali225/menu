@@ -12,6 +12,7 @@ export default function Cart() {
     if (!open) return;
 
     document.body.style.overflow = "hidden";
+    
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
