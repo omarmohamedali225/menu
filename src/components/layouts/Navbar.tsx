@@ -1,6 +1,6 @@
 import Button from "@/components/Button";
 import { useCart } from "@/contexts/CartContext";
-import i18next from "i18next";
+// import i18next from "i18next";
 import { ShoppingCart } from "lucide-react";
 import { motion } from "motion/react";
 import { useTranslation } from "react-i18next";
@@ -9,13 +9,13 @@ export default function Navbar() {
   const { handlerOpen } = useCart();
   const { t } = useTranslation();
 
-  const handleLocal = () => {
-    if (i18next.language === "ar") {
-      i18next.changeLanguage("en");
-    } else {
-      i18next.changeLanguage("ar");
-    }
-  };
+  // const handleLocal = () => {
+  //   if (i18next.language === "ar") {
+  //     i18next.changeLanguage("en");
+  //   } else {
+  //     i18next.changeLanguage("ar");
+  //   }
+  // };
 
   return (
     <div className="border-b border-b-amber-200 sticky top-0 bg-main z-1">
@@ -24,7 +24,7 @@ export default function Navbar() {
           <motion.img
             animate={{ rotate: 360 }}
             transition={{
-              repeat: Infinity,
+              repeat: 1,
               duration: 2,
               ease: "linear",
               type: "spring",
@@ -40,7 +40,7 @@ export default function Navbar() {
             </p>
           </div>
           <div className="space-x-1 flex">
-            <Button text={t("btnChangeLocal")} onClick={handleLocal} />
+            {/* <Button text={t("btnChangeLocal")} onClick={handleLocal} /> */}
             <Button onClick={handlerOpen}>
               <ShoppingCart size={18} />
               <span className="absolute -top-2 ltr:-right-2 rtl:-left-2 bg-amber-900 text-amber-100 p-1 rounded-full min-w-5 h-5 text-[10px] flex justify-center items-center border border-amber-50">

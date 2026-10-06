@@ -1,5 +1,6 @@
 import { motion } from "motion/react";
 export default function Cat({ catName }: { catName: string }) {
+  if (!catName) return <Skeleton />;
   return (
     <motion.div
       initial={{ opacity: 0, marginLeft: 20 }}
@@ -10,5 +11,13 @@ export default function Cat({ catName }: { catName: string }) {
         {catName}
       </h1>
     </motion.div>
+  );
+}
+
+function Skeleton() {
+  return (
+    <div className="py-3">
+      <div className="relative h-5 w-32 animate-pulse rounded bg-amber-900/15 before:absolute before:-left-2 rtl:before:-right-2 before:top-0 before:h-full before:w-1 before:rounded-full before:bg-red-700/30 before:content-['']" />
+    </div>
   );
 }
