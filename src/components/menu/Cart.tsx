@@ -30,7 +30,7 @@ export default function Cart() {
   return (
     <AnimatePresence>
       {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 z-100">
+        <div className="fixed inset-0 flex items-center justify-center p-3 z-100">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
