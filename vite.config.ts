@@ -17,9 +17,12 @@ export default defineConfig({
       devOptions: {
         enabled: true,
       },
-      // workbox: {
-      //   importScripts: ["/firebase-messaging-sw.js"],
-      // },
+      workbox: {
+        clientsClaim: true,
+        skipWaiting: true,
+        cleanupOutdatedCaches: true,
+        // importScripts: ["/firebase-messaging-sw.js"],
+      },
       manifest: {
         name: "El Baraka",
         short_name: "El Baraka",
