@@ -3,12 +3,12 @@ import { useCart } from "@/contexts/CartContext";
 // import i18next from "i18next";
 import { ShoppingCart } from "lucide-react";
 import { motion } from "motion/react";
-import { useTranslation } from "react-i18next";
+// import { useTranslation } from "react-i18next";
 import { useCartStorage } from "@/hooks/useCartStorage";
 
 export default function Navbar() {
   const { handlerOpen } = useCart();
-  const { t } = useTranslation();
+  // const { t } = useTranslation();
 
   const { data } = useCartStorage();
 
@@ -29,9 +29,9 @@ export default function Navbar() {
             className="w-14 h-14 rounded-full"
           />
           <div className="flex-1 min-w-0">
-            <h1 className="text-2xl font-bold leading-6">{t("title")}</h1>
+            <h1 className="text-2xl font-bold leading-6">البركة</h1>
             <p className="font-medium truncate text-[11px] text-[#92400e99] uppercase">
-              {t("subTitle")}
+              أشهى الأكلات المصرية الطازجة تُوصَل إلى باب منزلك.
             </p>
           </div>
           <div className="space-x-1 flex">

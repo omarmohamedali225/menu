@@ -19,11 +19,9 @@ export default function OfflineMode() {
   if (!offline) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-white z-50">
+    <div className="fixed inset-0 flex items-center justify-center bg-white z-200">
       <div className="text-center">
-        <h2 className="text-xl font-bold">
-          No Internet Connection
-        </h2>
+        <h2 className="text-xl font-bold">No Internet Connection</h2>
 
         <p className="text-gray-500 mt-2">
           Please check your connection and try again.
