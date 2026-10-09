@@ -13,9 +13,9 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: "autoUpdate",
-      injectRegister: "auto",
+      selfDestroying: true,
       devOptions: {
-        enabled: false,
+        enabled: true,
       },
       workbox: {
         clientsClaim: true,

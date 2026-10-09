@@ -4,20 +4,27 @@ import { useCategories, useMenu } from "@/features/menu/hooks";
 
 export default function SectionCatItems() {
   const { data: dataSections, isLoading } = useMenu();
-  const { data: dataCategories } = useCategories();
+  const { data: dataCategories, isLoading: loadCategories } = useCategories();
+
+  if (loadCategories) {
+    return (
+      <section className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <ProductCardSkeleton key={i} />
+        ))}
+      </section>
+    );
+  }
 
   return dataCategories?.map((data) => (
     <div key={data.id} data-category={data.slug} className="scroll-mt-36">
       <Cat catName={data.name_ar} />
       <section className="grid grid-cols-2 sm:grid-cols-3 gap-4">
         {dataSections &&
+          !isLoading &&
           dataSections
-            .filter((e) => e.categories?.id === data.id)
+            ?.filter((e) => e.categories?.id === data.id)
             .map((product) => <Item product={product} key={product.id} />)}
-        {isLoading &&
-          Array.from({ length: 4 }).map((_, i) => (
-            <ProductCardSkeleton key={i} />
-          ))}
       </section>
     </div>
   ));

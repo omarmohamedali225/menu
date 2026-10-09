@@ -8,8 +8,7 @@ export default function TabsCat() {
   const visibleSet = useRef(new Set<Element>());
   const isClickScrolling = useRef(false);
 
-  const { data: categories } = useCategories();
-
+  const { data: categories,isLoading:categoriesLoad } = useCategories();
 
   useEffect(() => {
     const interSection = new IntersectionObserver(
@@ -33,8 +32,10 @@ export default function TabsCat() {
       },
       {
         threshold: 0,
+        rootMargin:"0px 0px 0px 0px"
       },
     );
+
     document.querySelectorAll("[data-category]").forEach((e) => {
       interSection.observe(e);
     });
@@ -42,7 +43,7 @@ export default function TabsCat() {
     return () => {
       interSection.disconnect();
     };
-  }, []);
+  }, [categoriesLoad]);
 
   //عشان لما يضغط هو ويعمل سكرول ميحسبش كله يستني لغايه م يوقف يعمنا
   useEffect(() => {
@@ -54,10 +55,11 @@ export default function TabsCat() {
   // handleTabs
   const dataTabs = categories?.map((cat) => {
     return {
-      key: cat.slug ?? String(cat.id),
+      key: cat.slug ?? String(cat.slug),
       label: cat.name_ar,
     };
   });
+
 
   function HandleTapClick(key: string) {
     setActiveId(key);

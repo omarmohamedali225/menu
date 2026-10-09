@@ -56,15 +56,39 @@ export default function Details({
       width={{ xs: "95%", md: "90%", lg: "60%" }}
       centered
       footer={() => (
-        <p className="text-xs my-3 text-center text-[#92400e99] line-clamp-2 tracking-wider">
-          {isExisting && `المنتج متضاف يصحبي في العربية`}
-        </p>
+        // isExisting ? (
+        //   <p className="text-xs my-3 text-center text-[#92400e99] line-clamp-2 tracking-wider">
+        //     المنتج متضاف يصحبي في العربية
+        //   </p>
+        // )
+        <>
+          <h1 className="text-sm my-5 flex justify-between clear-both text-amber-700 font-bold">
+            هتدفع دول بس
+            <span>{total | 0} جنية</span>
+          </h1>
+
+          <Button
+            variant="outlined"
+            className="w-full my-4 hover:scale-95 active:scale-100"
+            styles={{
+              content: { color: "#bb4d00" },
+              root: { borderColor: "#b45309", padding: "20px" },
+            }}
+            onClick={handleCart}
+          >
+            {isExisting && ""}
+            ضيف في السلة يصحبي
+          </Button>
+        </>
       )}
       // styles={{ body: { height: "70vh" } }}
-      classNames={{ body: "h-[70vh]", footer: "shadow p-2!" }}
+      classNames={{
+        body: "md:h-[70vh]",
+        container: "md:pb-0! [&_.ant-modal-close]:!end-auto",
+      }}
       onCancel={onclick}
     >
-      <div className="flex flex-col md:flex-row items-center h-full overflow-y-auto scrollbar-none">
+      <div className="flex flex-col md:flex-row items-center h-full overflow-y-auto scrollbar-thumb-amber-600 scrollbar-thin">
         <div className="h-full md:sticky md:top-0 flex items-center">
           <div className="aspect-square max-w-95 p-4">
             <img
@@ -144,10 +168,10 @@ export default function Details({
                 className="flex-1 justify-center flex shrink-0 items-center gap-2 rounded-lg border border-amber-800 bg-white px-1.5 py-1"
               >
                 <Button
-                className="flex-1"
-                onClick={() => {
-                  setQuantity(Math.max(Number(quantity - 1), 1));
-                }}
+                  className="flex-1"
+                  onClick={() => {
+                    setQuantity(Math.max(Number(quantity - 1), 1));
+                  }}
                 >
                   -
                 </Button>
@@ -165,24 +189,6 @@ export default function Details({
                   +
                 </Button>
               </div>
-              
-              <h1 className="text-sm my-5 flex justify-between clear-both text-amber-700 font-bold">
-                هتدفع دول بس
-                <span>{total | 0} جنية</span>
-              </h1>
-
-              <Button
-                variant="outlined"
-                className="w-full my-4 hover:scale-95 active:scale-100"
-                styles={{
-                  content: { color: "#bb4d00" },
-                  root: { borderColor: "#b45309", padding: "20px" },
-                }}
-                onClick={handleCart}
-              >
-                {isExisting && ""}
-                ضيف في السلة يصحبي
-              </Button>
             </div>
           </div>
         </div>
