@@ -8,7 +8,7 @@ export default function SectionCatItems() {
 
   return dataCategories?.map((data) => (
     <div key={data.id} data-category={data.slug} className="scroll-mt-36">
-      <Cat catName={data.name_en} />
+      <Cat catName={data.name_ar} />
       <section className="grid grid-cols-2 sm:grid-cols-3 gap-4">
         {dataSections &&
           dataSections
