@@ -11,7 +11,7 @@ i18next
     backend: {
       loadPath: "locales/{{lng}}/translation.json",
     },
-    fallbackLng: "en",
+    fallbackLng: "ar",
     supportedLngs: ["ar", "en"],
     detection: {
       order: ["localStorage", "navigator"],

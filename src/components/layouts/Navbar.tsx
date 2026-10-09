@@ -4,18 +4,13 @@ import { useCart } from "@/contexts/CartContext";
 import { ShoppingCart } from "lucide-react";
 import { motion } from "motion/react";
 import { useTranslation } from "react-i18next";
+import { useCartStorage } from "@/hooks/useCartStorage";
 
 export default function Navbar() {
   const { handlerOpen } = useCart();
   const { t } = useTranslation();
 
-  // const handleLocal = () => {
-  //   if (i18next.language === "ar") {
-  //     i18next.changeLanguage("en");
-  //   } else {
-  //     i18next.changeLanguage("ar");
-  //   }
-  // };
+  const { data } = useCartStorage();
 
   return (
     <div className="border-b border-b-amber-200 sticky top-0 bg-main z-1">
@@ -43,9 +38,11 @@ export default function Navbar() {
             {/* <Button text={t("btnChangeLocal")} onClick={handleLocal} /> */}
             <Button onClick={handlerOpen}>
               <ShoppingCart size={18} />
-              <span className="absolute -top-2 ltr:-right-2 rtl:-left-2 bg-amber-900 text-amber-100 p-1 rounded-full min-w-5 h-5 text-[10px] flex justify-center items-center border border-amber-50">
-                1
-              </span>
+              {data.length>0 && (
+                <span className="absolute -top-2 ltr:-right-2 rtl:-left-2 bg-amber-900 text-amber-100 p-1 rounded-full min-w-5 h-5 text-[10px] flex justify-center items-center border border-amber-50">
+                  {data.length}
+                </span>
+              )}
             </Button>
 
             {/* <button className="relative bg-amber-100 text-amber-900 rounded-full py-1 px-2 font-bold text-xs hover:bg-amber-200 transition-colors">

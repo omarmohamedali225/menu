@@ -29,6 +29,7 @@ export default function CartContext({
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useCart(): Context {
   const context = useContext(ContextC);
 

@@ -15,7 +15,7 @@ export default defineConfig({
       registerType: "autoUpdate",
       injectRegister: "auto",
       devOptions: {
-        enabled: true,
+        enabled: false,
       },
       workbox: {
         clientsClaim: true,
@@ -50,5 +50,11 @@ export default defineConfig({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
+  },
+  server: {
+    host: true,
+    port: 5173,
+    strictPort: true,
+    allowedHosts: true,
   },
 });

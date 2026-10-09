@@ -4,67 +4,62 @@ import SectionCatItems from "@/components/menu/SectionCatItems";
 import TabsCat from "@/components/menu/TabsCat";
 // import TabsCat from "@/components/TabsCat";
 // import InstallApp from "@/components/InstallApp";
-import { supabase } from "./../../supabase";
-import { useEffect, useState } from "react";
-import type { CategoriesType } from "@/types/Products";
-
-// const categories = [
-//   // { key: "1", label: "Most Ordered 🔥" },
-//   { key: "2", label: "Desserts" },
-//   { key: "3", label: "Desserts2" },
-//   { key: "4", label: "Desserts3" },
-// ];
-
 export default function Menu() {
-  const [categories, setCategories] = useState<CategoriesType[] | null>(null);
-
-  useEffect(() => {
-    async function data() {
-      const res = await supabase.from("categories").select("*");
-      setCategories(res.data);
-    }
-    data();
-  }, []);
-
   return (
     <>
-      {/* <Details/> */}
       {/* <Notification /> */}
       {/* <InstallApp /> */}
       <Offer />
       {/* <SectionCatItems catName={"Most Ordered 🔥"} /> */}
-      {categories && <TabsCat categories={categories} />}
-      {categories?.map((cat) => (
-        <SectionCatItems key={cat.id} data={cat} />
-      ))}
-      {/* <SectionCatItems
-        catName="Sandwiches
-"
-      />
-      <SectionCatItems
-        catName="Pasta
-"
-      />
-      <SectionCatItems
-        catName="Fast Meals
-
-"
-      />
-      <SectionCatItems
-        catName="Hawawshi
-
-"
-      />
-      <SectionCatItems
-        catName="Chicken
-
-"
-      />
-      <SectionCatItems
-        catName="Beverages
-
-"
-      /> */}
+      <TabsCat />
+      <SectionCatItems />
+      <Loader />
     </>
+  );
+}
+
+import { useEffect, useState } from "react";
+
+function Loader() {
+  const [hide, setHide] = useState(false);
+  const [removed, setRemoved] = useState(false);
+
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout>;
+    const finish = () => {
+      timer = setTimeout(() => setHide(true), 3000);
+    };
+
+    if (document.readyState === "complete") finish();
+    else window.addEventListener("load", finish);
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("load", finish);
+    };
+  }, []);
+
+  if (removed) return null;
+
+  return (
+    <div
+      className={`loader ${hide ? "loader--hide" : ""}`}
+      onTransitionEnd={() => hide && setRemoved(true)}
+    >
+      <div className="scene">
+        <span className="steam s1" />
+        <span className="steam s2" />
+        <span className="steam s3" />
+
+        <div className="dome" />
+        <div className="food" />
+        <div className="plate" />
+      </div>
+
+      <p className="loader__text">
+        جاري تحضير المنيو
+        <span className="dots" />
+      </p>
+    </div>
   );
 }

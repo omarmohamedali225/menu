@@ -13,11 +13,153 @@
   }
 }
 
-/* @utility scrollbar-hide {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  &::-webkit-scrollbar {
-    display: none;
+@media (max-width: 991px) {
+  ::-webkit-scrollbar {
+    width: 0;
   }
-} */
+}
 
+/* loading page */
+.loader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 36px;
+  background: radial-gradient(circle at 50% 40%, #2b1d12, #140d08);
+  transition: opacity 0.6s ease, visibility 0.6s ease;
+}
+
+.loader--hide {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.scene {
+  position: relative;
+  width: 160px;
+  height: 130px;
+}
+
+/* الطبق */
+.plate {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 160px;
+  height: 12px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: linear-gradient(#f3e7d0, #cdb994);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.5);
+}
+
+/* الأكل اللي تحت الغطاء */
+.food {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  width: 64px;
+  height: 30px;
+  transform: translateX(-50%);
+  border-radius: 50% 50% 10px 10px;
+  background: linear-gradient(#f4a340, #c8691b);
+  box-shadow: 0 0 24px rgba(244, 163, 64, 0.45);
+  animation: glow 2.4s ease-in-out infinite;
+}
+
+/* الغطاء */
+.dome {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  width: 112px;
+  height: 62px;
+  margin-left: -56px;
+  border-radius: 112px 112px 6px 6px;
+  background: linear-gradient(135deg, #f7dd8a, #c9983a 60%, #a8782a);
+  transform-origin: left bottom;
+  animation: lift 2.4s ease-in-out infinite;
+}
+
+.dome::before {
+  /* المقبض */
+  content: "";
+  position: absolute;
+  top: -11px;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  margin-left: -8px;
+  border-radius: 50%;
+  background: #f7dd8a;
+}
+
+.dome::after {
+  /* لمعة */
+  content: "";
+  position: absolute;
+  top: 12px;
+  left: 18px;
+  width: 26px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.45);
+  transform: rotate(-30deg);
+}
+
+/* البخار */
+.steam {
+  position: absolute;
+  bottom: 40px;
+  width: 8px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  filter: blur(5px);
+  opacity: 0;
+  animation: rise 2.4s ease-in infinite;
+}
+.s1 { left: 42%; }
+.s2 { left: 52%; animation-delay: 0.15s; }
+.s3 { left: 62%; animation-delay: 0.3s; }
+
+/* النص */
+.loader__text {
+  margin: 0;
+  color: #f3e7d0;
+  font-size: 20px;
+  letter-spacing: 0.5px;
+}
+
+.dots::after {
+  content: "";
+  animation: dots 1.5s steps(4) infinite;
+}
+
+@keyframes lift {
+  0%, 25%   { transform: translateY(0) rotate(0); }
+  45%, 75%  { transform: translate(18px, -52px) rotate(-14deg); }
+  95%, 100% { transform: translateY(0) rotate(0); }
+}
+
+@keyframes rise {
+  0%, 35% { opacity: 0; transform: translateY(0) scaleX(1); }
+  55%     { opacity: 0.7; }
+  100%    { opacity: 0; transform: translateY(-60px) scaleX(2.2); }
+}
+
+@keyframes glow {
+  0%, 35%, 100% { box-shadow: 0 0 10px rgba(244, 163, 64, 0.2); }
+  55%, 75%      { box-shadow: 0 0 34px rgba(244, 163, 64, 0.7); }
+}
+
+@keyframes dots {
+  0%   { content: ""; }
+  25%  { content: "."; }
+  50%  { content: ".."; }
+  75%, 100% { content: "..."; }
+}

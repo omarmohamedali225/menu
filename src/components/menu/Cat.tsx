@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-export default function Cat({ catName }: { catName: string }) {
+export default function Cat({ catName }: { catName: string|null }) {
   if (!catName) return <Skeleton />;
   return (
     <motion.div

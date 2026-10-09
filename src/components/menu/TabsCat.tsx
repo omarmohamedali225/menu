@@ -1,15 +1,15 @@
-import type { CategoriesType } from "@/types/Products";
+import { useCategories } from "@/features/menu/hooks";
+// import type { CategoriesType } from "@/types/Products";
 import { Tabs } from "antd";
 import { useEffect, useRef, useState } from "react";
 
-export default function TabsCat({
-  categories,
-}: {
-  categories: CategoriesType[];
-}) {
+export default function TabsCat() {
   const [activeId, setActiveId] = useState<null | string>(null);
   const visibleSet = useRef(new Set<Element>());
   const isClickScrolling = useRef(false);
+
+  const { data: categories } = useCategories();
+
 
   useEffect(() => {
     const interSection = new IntersectionObserver(
@@ -52,9 +52,9 @@ export default function TabsCat({
   }, []);
 
   // handleTabs
-  const dataTabs = categories.map((cat) => {
+  const dataTabs = categories?.map((cat) => {
     return {
-      key: cat.slug,
+      key: cat.slug ?? String(cat.id),
       label: cat.name_ar,
     };
   });
@@ -69,15 +69,17 @@ export default function TabsCat({
 
   return (
     <div className="bg-main sticky top-20 z-50">
-      <Tabs
-        activeKey={activeId ? activeId : dataTabs[0]?.key}
-        onTabClick={HandleTapClick}
-        items={dataTabs}
-        direction="rtl"
-        classNames={{
-          item: "[&.ant-tabs-tab-active_.ant-tabs-tab-btn]:bg-amber-700! [&.ant-tabs-tab-active_.ant-tabs-tab-btn]:text-main! [&_.ant-tabs-tab-btn]:p-2 [&_.ant-tabs-tab-btn]:rounded-xl",
-        }}
-      />
+      {dataTabs && (
+        <Tabs
+          activeKey={activeId ? activeId : dataTabs[0]?.key}
+          onTabClick={HandleTapClick}
+          items={dataTabs}
+          direction="rtl"
+          classNames={{
+            item: "[&.ant-tabs-tab-active_.ant-tabs-tab-btn]:bg-amber-700! [&.ant-tabs-tab-active_.ant-tabs-tab-btn]:text-main! [&_.ant-tabs-tab-btn]:p-2 [&_.ant-tabs-tab-btn]:rounded-xl",
+          }}
+        />
+      )}
     </div>
   );
 }
