@@ -1,22 +1,27 @@
-import { Link } from "react-router";
+import type React from "react";
+import { NavLink } from "react-router";
 
 export function ListItem({
   children,
   url,
+  icon,
 }: {
   children: React.ReactNode;
   url: string;
+  icon?: React.ReactElement;
 }) {
-  const isSelect = (e: string) => {
-    return location.pathname === e;
-  };
   return (
-    <li
-      className={`${isSelect(url) && "bg-[#eae4e9]"} hover:bg-[#CCCDE0] transition-colors rounded`}
-    >
-      <Link to={url} className="p-2 block text-amber-700!">
+    <li className={`hover:bg-gray-600 transition-colors rounded`}>
+      <NavLink
+        to={url}
+        end
+        className={({ isActive }) =>
+          `${isActive ? "bg-gray-700!" : ""} py-2 text-[13px] px-1 text-sm text-white! flex items-center gap-1`
+        }
+      >
+        {icon}
         {children}
-      </Link>
+      </NavLink>
     </li>
   );
 }

@@ -6,7 +6,7 @@ export default function DashLayout() {
   return (
     <Flex>
       <Drawer />
-      <div className="w-[calc(100%-240px)] max-md:w-full! mr-auto bg-white">
+      <div className="w-[calc(100%-240px)] max-md:w-full! mr-auto bg-gray-100">
         <Outlet />
       </div>
     </Flex>

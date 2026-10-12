@@ -73,7 +73,7 @@ export default function TableDashboard() {
             defaultOpen
             options={categories?.map((e) => ({
               value: e.id,
-              label: e.name_ar,
+              label: e.name,
             }))}
             onBlur={() => setEditing(null)}
             onChange={(e) => {
@@ -143,23 +143,23 @@ export default function TableDashboard() {
 
   const data = menu?.map((m) => ({
     id: m.id ?? 0,
-    name: m.name_ar ?? "-",
-    category: m.categories?.name_ar ?? "-",
+    name: m.name ?? "-",
+    category: m.categories?.name ?? "-",
     categoryId: m.category_id ?? "",
     price: m.price ?? "-",
-    extra: m.extras.map((e) => e.name_ar).join(" و"),
+    extra: m.extras.map((e) => e.name).join(" و"),
   }));
   return (
     <Table
       rowKey={"id"}
-      pagination={false}
       columns={columns}
+      pagination={{pageSize:8}}
       loading={isLoading}
       dataSource={data}
       scroll={{ x: "max-content" }}
       tableLayout="fixed"
       size="small"
-      classNames={{ root: "w-full" }}
+      classNames={{ root: "w-full min-h-75!" }}
     />
   );
 }

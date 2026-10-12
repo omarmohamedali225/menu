@@ -100,10 +100,10 @@ export default function Details({
           <div className="flex py-2 flex-col">
             <div className="">
               <h1 className="text-sm text-amber-500 font-bold">
-                #{product.categories?.name_ar}
+                #{product.categories?.name}
               </h1>
               <h1 className="text-3xl font-bold text-amber-700">
-                {product.name_ar}
+                {product.name}
               </h1>
               <p className="text-xs my-3 text-[#92400e99] line-clamp-2 tracking-wider">
                 مفيش كلام يتقال يصحبي ده اكل مصري اطلب هيعجبك والنجوم 10 من 10
@@ -119,7 +119,7 @@ export default function Details({
               <h2 className="text-sm my-3 float-right text-amber-700 font-bold">
                 {product.price} جنية
               </h2>
-              {product.extras.length > 0 && (
+              {product.extras.filter((e) => e.is_available).length > 0 && (
                 <>
                   <h1 className="text-sm my-5 clear-both text-amber-700 font-bold">
                     الأضافات
@@ -141,7 +141,7 @@ export default function Details({
                         >
                           <div className="flex flex-1 items-center justify-between">
                             <span className="text-sm">
-                              {e.name_ar}
+                              {e.name}
                               <sub>{quantity}x</sub>
                             </span>
                             <span className="text-amber-700">

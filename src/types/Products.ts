@@ -1,5 +1,5 @@
 import type { OffersTypeApi, ProductWithCategories } from "@/features/menu/api";
-import type { Database } from "@/lib/database.types";
+import type { Database } from "@/types/database.types";
 
 export interface ProductsType {
   id: string;
@@ -10,12 +10,11 @@ export interface ProductsType {
   created_at: string;
 }
 
-export interface CategoriesType {
-  id: string;
-  slug: string;
-  name_ar: string;
-  name_en: string;
-}
+// export interface CategoriesType {
+//   id: string;
+//   slug: string;
+//   name: string;
+// }
 
 export type TypeProduct = Database["public"]["Tables"]["products"]["Row"];
 export type TypeCategory = Database["public"]["Tables"]["categories"]["Row"];

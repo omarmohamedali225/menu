@@ -12,9 +12,10 @@ export default function Offer() {
       </div>
     );
   }
+  
 
   return (
-    <div className="py-2 overflow-hidden bg-main">
+    <div className="py-2 overflow-hidden">
       <motion.div
         initial={{ opacity: 0, scaleX: 0 }}
         animate={{ opacity: 1, scaleX: 1 }}
@@ -29,7 +30,7 @@ export default function Offer() {
         }}
         className="rounded-2xl overflow-hidden shadow-lg relative"
       >
-        {data?.map((e) => (
+        {data?.filter(d=>d.is_available).map((e) => (
           <div key={e.id}>
             <img
               src="/offer1.png"

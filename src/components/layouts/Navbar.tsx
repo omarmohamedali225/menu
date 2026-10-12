@@ -13,7 +13,7 @@ export default function Navbar() {
   const { data } = useCartStorage();
 
   return (
-    <div className="border-b border-b-amber-200 sticky top-0 bg-main z-1">
+    <div className="border-b border-b-amber-200 sticky top-0 bg-gray-100 z-1">
       <div className="max-w-4xl mx-auto py-3 px-4 border-b-amber-800">
         <div className="flex items-center gap-3">
           <motion.img

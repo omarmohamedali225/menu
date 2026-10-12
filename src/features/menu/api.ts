@@ -17,7 +17,7 @@ export async function fetchMenu() {
 export async function updateName(id: number, value: string) {
   const { error } = await supabase
     .from("products")
-    .update({ name_ar: value })
+    .update({ name: value })
     .eq("id", id);
   if (error) throw error;
   return;
@@ -39,11 +39,40 @@ export async function updateCategories(id: number, value: string) {
   return;
 }
 // offer
-const offers = supabase.from("offers").select('*')
+const offers = supabase.from("offers").select("*");
 export type OffersTypeApi = QueryData<typeof offers>[number];
 
 export async function fetchOffers() {
-  const { data,error } = await offers;
+  const { data, error } = await offers;
   if (error) throw error;
   return data;
+}
+
+// extras
+const extras = supabase.from("extras").select("*");
+export type ExtrasTypeApi = QueryData<typeof extras>[number];
+
+export async function fetchExtras() {
+  const { data, error } = await extras;
+  if (error) throw error;
+  return data;
+}
+
+type Table = "products" | "offers" | "categories" | "extras";
+
+export async function updateAvailable({
+  table,
+  bool,
+  id,
+}: {
+  table: Table;
+  bool: boolean;
+  id: string | number;
+}) {
+  const { error } = await supabase
+    .from(table)
+    .update({ is_available: bool })
+    .eq("id", id);
+  if (error) throw error;
+  return;
 }

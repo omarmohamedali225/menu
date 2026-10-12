@@ -5,7 +5,7 @@ export default function AddProduct() {
   const [open, setOpen] = React.useState(false);
   return (
     <>
-      <Button onClick={() => setOpen(true)} className="mb-4">اضافة منتج</Button>
+      <Button onClick={() => setOpen(true)} className="">اضافة منتج</Button>
       <Modal
         open={open}
         onCancel={() => setOpen(false)}
@@ -60,7 +60,7 @@ export default function AddProduct() {
           </Space>
 
           <Button type={"primary"} htmlType="submit">
-            اضافة منتج
+            اضافة صنف
           </Button>
         </Form>
       </Modal>

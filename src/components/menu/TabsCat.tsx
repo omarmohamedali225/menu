@@ -8,7 +8,7 @@ export default function TabsCat() {
   const visibleSet = useRef(new Set<Element>());
   const isClickScrolling = useRef(false);
 
-  const { data: categories,isLoading:categoriesLoad } = useCategories();
+  const { data: categories, isLoading: categoriesLoad } = useCategories();
 
   useEffect(() => {
     const interSection = new IntersectionObserver(
@@ -32,7 +32,7 @@ export default function TabsCat() {
       },
       {
         threshold: 0,
-        rootMargin:"0px 0px 0px 0px"
+        rootMargin: "0px 0px 0px 0px",
       },
     );
 
@@ -53,13 +53,14 @@ export default function TabsCat() {
   }, []);
 
   // handleTabs
-  const dataTabs = categories?.map((cat) => {
-    return {
-      key: cat.slug ?? String(cat.slug),
-      label: cat.name_ar,
-    };
-  });
-
+  const dataTabs = categories
+    ?.filter((c) => c.is_available)
+    .map((cat) => {
+      return {
+        key: cat.slug ?? String(cat.slug),
+        label: cat.name,
+      };
+    });
 
   function HandleTapClick(key: string) {
     setActiveId(key);
@@ -70,7 +71,7 @@ export default function TabsCat() {
   }
 
   return (
-    <div className="bg-main sticky top-20 z-50">
+    <div className="bg-gray-100 sticky top-20 z-50">
       {dataTabs && (
         <Tabs
           activeKey={activeId ? activeId : dataTabs[0]?.key}
@@ -78,6 +79,8 @@ export default function TabsCat() {
           items={dataTabs}
           direction="rtl"
           classNames={{
+            indicator: "hidden",
+            header: "mb-0!",
             item: "[&.ant-tabs-tab-active_.ant-tabs-tab-btn]:bg-amber-700! [&.ant-tabs-tab-active_.ant-tabs-tab-btn]:text-main! [&_.ant-tabs-tab-btn]:p-2 [&_.ant-tabs-tab-btn]:rounded-xl",
           }}
         />

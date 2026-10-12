@@ -9,12 +9,12 @@ export function ItemProductCart({ data }: { data: ProductRowCart }) {
       {/* Product info */}
       <div className="min-w-0 flex-1">
         <h2 className="truncate text-sm font-semibold text-amber-900">
-          {data.item?.name_ar}
+          {data.item?.name}
         </h2>
 
         <p className="mt-1 text-xs text-amber-700/60">
           {/* {data.extra.length > 0 && "أضافة"}{" "} */}
-          {data.extras?.map((e) => e.name_ar).join(" و")}
+          {data.extras?.map((e) => e.name).join(" و")}
         </p>
 
         <span className="mt-1 block text-sm font-bold text-amber-700">

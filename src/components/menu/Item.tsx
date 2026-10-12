@@ -5,6 +5,7 @@ import Details from "./Details";
 // import { useCartStorage } from "@/hooks/useCartStorage";
 import type { ProductWithCategories } from "@/features/menu/api";
 import useBack from "@/hooks/useBack";
+import { message } from "antd";
 // import type { CartType } from "@/types/Products";
 
 export default function Item({ product }: { product: ProductWithCategories }) {
@@ -40,6 +41,7 @@ export default function Item({ product }: { product: ProductWithCategories }) {
     <>
       <motion.div
         onClick={() => {
+          if (!product.is_available) return message.info("المنتج غير متوفر");
           setSelectProduct(product);
           addEventModal();
         }}
@@ -50,17 +52,22 @@ export default function Item({ product }: { product: ProductWithCategories }) {
       >
         <div className="relative w-full h-28 sm:w-26 md:h-26 shrink-0 overflow-hidden">
           <img
-            src={
-              "https://placehold.co/600x600/fef3c7/b45309/webp?text=" +
-              product.name_en
-            }
+            // src={
+            //   "https://placehold.co/600x600/fef3c7/b45309/webp?text=" +
+            //   product.name
+            // }
             className="w-full h-full aspect-square object-cover group-hover:scale-105 transition-transform"
-            alt=""
+            alt={""}
           />
+          {!product.is_available && (
+            <span className="absolute flex-1 top-2 left-2 bg-red-200 px-2 py-1 text-[11px] rounded">
+              المنتج غير متوفر
+            </span>
+          )}
         </div>
         <div className="p-2 flex flex-col flex-1  space-y-2">
-          <h1>{product.name_ar}</h1>
-          {product.extras.length > 0 && (
+          <h1>{product.name}</h1>
+          {product.extras.filter((e) => e.is_available).length > 0 && (
             <p className="text-[10px] bg-[#FBEACB] text-[#7A2E00] w-fit py-1 px-2 text-sm rounded-2xl tracking-wider">
               إضافات متاحة
             </p>

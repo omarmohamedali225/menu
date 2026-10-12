@@ -7,7 +7,7 @@ import { RouterProvider } from "react-router";
 const queryCLient = new QueryClient();
 function App() {
   return (
-    <div className="bg-main min-h-screen">
+    <div className="bg-gray-100 min-h-screen">
       <OfflineMode />
       <ConfigProvider
         theme={{
