@@ -38,3 +38,12 @@ export async function updateCategories(id: number, value: string) {
   if (error) throw error;
   return;
 }
+// offer
+const offers = supabase.from("offers").select('*')
+export type OffersTypeApi = QueryData<typeof offers>[number];
+
+export async function fetchOffers() {
+  const { data,error } = await offers;
+  if (error) throw error;
+  return data;
+}

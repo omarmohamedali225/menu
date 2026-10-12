@@ -1,12 +1,11 @@
 // import Button from "@/components/Button";
-import { Button } from "antd";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 import Details from "./Details";
-import { useCartStorage } from "@/hooks/useCartStorage";
+// import { useCartStorage } from "@/hooks/useCartStorage";
 import type { ProductWithCategories } from "@/features/menu/api";
 import useBack from "@/hooks/useBack";
-import type { CartType } from "@/types/Products";
+// import type { CartType } from "@/types/Products";
 
 export default function Item({ product }: { product: ProductWithCategories }) {
   // const { t } = useTranslation();
@@ -19,18 +18,19 @@ export default function Item({ product }: { product: ProductWithCategories }) {
     };
   }, [selectProduct]);
 
-  const { data, addItem, deleteItem } = useCartStorage();
+  // const { data, addItem, deleteItem } = useCartStorage();
 
-  const exist = data.find((e) => e.id === product.id);
+  // const exist = data.find((e) => e.id === product.id && e.type === "product");
 
-  const handleAdd = (p: ProductWithCategories) => {
-    const data: CartType = {
-      id: p.id,
-      extra: [],
-      quantity: 1,
-    };
-    addItem(data);
-  };
+  // const handleAdd = (p: ProductWithCategories) => {
+  //   const data: CartType = {
+  //     type: "product",
+  //     id: p.id,
+  //     extra: [],
+  //     quantity: 1,
+  //   };
+  //   addItem(data);
+  // };
 
   const { addEventModal } = useBack(!!selectProduct, () =>
     setSelectProduct(null),
@@ -46,86 +46,70 @@ export default function Item({ product }: { product: ProductWithCategories }) {
         initial={{ opacity: 0, y: 10 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        className="bg-white rounded-2xl select-none group border border-amber-100 shadow"
+        className="bg-white flex flex-col sm:flex-row p-2 rounded-2xl select-none group border border-amber-100 shadow"
       >
-        <div className="relative overflow-hidden rounded-tl-2xl rounded-tr-2xl">
+        <div className="relative w-full h-28 sm:w-26 md:h-26 shrink-0 overflow-hidden">
           <img
             src={
               "https://placehold.co/600x600/fef3c7/b45309/webp?text=" +
               product.name_en
             }
-            className="w-full aspect-square rounded-tl-2xl rounded-tr-2xl object-cover group-hover:scale-105 transition-transform"
+            className="w-full h-full aspect-square object-cover group-hover:scale-105 transition-transform"
             alt=""
           />
-          {/* <span className="absolute bottom-1 left-1 bg-amber-700/90 text-amber-50 rounded-2xl py-1 px-2 text-[11px]">
-            غير معرف
-          </span> */}
-          {exist && (
-            <span className="absolute top-1 right-1 min-w-5 h-5 flex items-center bg-amber-700/90 text-amber-50 rounded-2xl py-1 px-2 text-[11px]">
-              {exist.quantity} قطع في العربة
-            </span>
-          )}
         </div>
-        <div className="p-2 space-y-2">
-          <h1 className="text-sm line-clamp-2 font-bold">{product.name_ar}</h1>
-          <p className="text-xs text-[#92400e99] line-clamp-2 tracking-wider">
-            {product.name_ar}
-          </p>
-          <h2 className="text-sm text-amber-700">{product.price} جنية</h2>
-          <div className="flex justify-end">
-            {/* <Button text={t("addToCart")} /> */}
-            {!exist && (
-              <div className="flex-1 justify-center flex-col md:flex-row flex shrink-0 items-center gap-2 rounded-lg bg-white px-1.5 py-1">
-                {/* <Button
-                  variant="outlined"
-                  className="w-full"
-                  styles={{
-                    root: { padding: "20px" },
-                  }}
-                >
-                  خش اتفرج
-                </Button> */}
-                <Button
-                  variant="outlined"
-                  className="w-full"
-                  styles={{
-                    root: { padding: "20px" },
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleAdd(product);
-                  }}
-                >
-                  أضافة للسلة
-                </Button>
-              </div>
-            )}
-            {exist && (
+        <div className="p-2 flex flex-col flex-1  space-y-2">
+          <h1>{product.name_ar}</h1>
+          {product.extras.length > 0 && (
+            <p className="text-[10px] bg-[#FBEACB] text-[#7A2E00] w-fit py-1 px-2 text-sm rounded-2xl tracking-wider">
+              إضافات متاحة
+            </p>
+          )}
+          <div className="flex mt-auto justify-between items-center">
+            <h2 className="text-lg text-amber-700 font-extrabold text-left mr-auto">
+              {product.price}{" "}
+              <small className="font-normal text-xs">جنية</small>
+            </h2>
+            {/* {!exist ? (
+              <button
+                className="rounded-full text-3xl cursor-pointer hover:bg-[#7a2f00d0] transition-colors bg-[#7A2E00] text-[#FBEACB] w-11 h-11 shadow shrink-0"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleAdd(product);
+                }}
+              >
+                +
+              </button>
+            ) : (
               <div
                 onClick={(e) => e.stopPropagation()}
-                className="flex-1 justify-center flex shrink-0 items-center gap-2 rounded-lg border border-amber-800 bg-white px-1.5 py-1"
+                className="justify-center flex shrink-0 items-center gap-2 rounded-lg border-amber-800"
               >
-                <Button
-                  onClick={() => {
+                <button
+                  className="rounded-full text-xl cursor-pointer hover:bg-[#7a2f00d0] transition-colors bg-[#7A2E00] text-[#FBEACB] w-11 h-11 shadow shrink-0"
+                  onClick={(e) => {
+                    e.stopPropagation();
                     deleteItem(exist);
                   }}
                 >
                   -
-                </Button>
+                </button>
 
                 <span className="min-w-5 text-center text-sm font-bold text-amber-900">
                   {exist.quantity}
                 </span>
 
-                <Button
-                  onClick={() => {
+                <button
+                  className="rounded-full text-xl cursor-pointer hover:bg-[#7a2f00d0] transition-colors bg-[#7A2E00] text-[#FBEACB] w-11 h-11 shadow shrink-0"
+                  onClick={(e) => {
+                    e.stopPropagation();
                     addItem(exist);
                   }}
                 >
                   +
-                </Button>
+                </button>
               </div>
-            )}
+            )} */}
           </div>
         </div>
       </motion.div>

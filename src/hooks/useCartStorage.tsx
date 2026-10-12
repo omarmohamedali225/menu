@@ -12,7 +12,7 @@ const ContextStorage = createContext<Type | null>(null);
 
 function loadCart(): CartType[] {
   try {
-    const raw = localStorage.getItem("products");
+    const raw = localStorage.getItem("data");
     return raw ? JSON.parse(raw) : [];
   } catch {
     return [];
@@ -28,7 +28,7 @@ export default function StorageCartContext({
 
   useEffect(() => {
     try {
-      localStorage.setItem("products", JSON.stringify(data));
+      localStorage.setItem("data", JSON.stringify(data));
     } catch {
       //
     }
@@ -36,12 +36,31 @@ export default function StorageCartContext({
 
   function addItem(item: CartType) {
     setData((prev) => {
-      const index = prev.findIndex(
-        (p) =>
-          p.id === item.id &&
-          p.extra.length === item.extra.length &&
-          item.extra.every((i) => p.extra.some((r) => i === r)),
-      );
+      // const index = prev.findIndex(
+      //   (p) => p.type === item.type && p.id === item.id,
+      //   // p.extra.length === item.extra.length &&
+      //   // item.extra.every((i) => p.extra.some((r) => i === r)),
+      // );
+      // const index = prev.findIndex((p) => {
+      // if (p.type !== item.type || p.id !== item.id) return false;
+
+      // if(p.extra&&item.extra){
+      //   return p.extra.length===item.extra.length && item.extra.every((i) => p.extra?.includes(i));
+      // }
+
+      // return true
+      const index = prev.findIndex((p) => {
+        if (p.id !== item.id || p.type !== item.type) return false;
+
+        if (p.extra && item.extra) {
+          return (
+            p.extra.length === item.extra.length &&
+            item.extra.every((i) => p.extra?.includes(i))
+          );
+        }
+
+        return true;
+      });
 
       if (index === -1) {
         return [...prev, item];
@@ -51,17 +70,23 @@ export default function StorageCartContext({
         i === index ? { ...p, quantity: p.quantity + 1 } : p,
       );
     });
-    localStorage.setItem("products", JSON.stringify(data));
+    localStorage.setItem("data", JSON.stringify(data));
     message.success("تم تحديث العربة");
   }
   function deleteItem(item: CartType) {
     setData((prev) => {
-      const index = prev.findIndex(
-        (p) =>
-          p.id === item.id &&
-          p.extra.length === item.extra.length &&
-          item.extra.every((i) => p.extra.some((r) => i === r)),
-      );
+      const index = prev.findIndex((p) => {
+        if (p.id !== item.id || p.type !== item.type) return false;
+
+        if (p.extra && item.extra) {
+          return (
+            p.extra.length === item.extra.length &&
+            item.extra.every((i) => p.extra?.includes(i))
+          );
+        }
+
+        return true;
+      });
 
       if (index === -1) {
         return [...prev, item];
@@ -71,10 +96,20 @@ export default function StorageCartContext({
         .map((p, i) => (i === index ? { ...p, quantity: p.quantity - 1 } : p))
         .filter((e) => e.quantity > 0);
     });
-    localStorage.setItem("products", JSON.stringify(data));
+    localStorage.setItem("data", JSON.stringify(data));
     message.success("تم تحديث العربة");
-    message.info("بتمسح ليه يفقير");
   }
+
+  // function addOffer(item: OfferType) {
+  //   setOffers((prev) => {
+  //     const find = offers.findIndex((o) => o.id === item.id);
+  //     if (find===-1) {
+  //       return [...prev, item];
+  //     }
+  //     return prev.map(p=>p.id===item.id?{ ...p, quantity: p.quantity + 1 }:p);
+  //   });
+  //   message.success("تم أضافة العرض");
+  // }
 
   return (
     <ContextStorage.Provider value={{ data, addItem, deleteItem }}>

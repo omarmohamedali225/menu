@@ -1,19 +1,22 @@
-import Button from "@/components/Button";
 import { useCart } from "@/contexts/CartContext";
 import { AnimatePresence, motion } from "motion/react";
 import { X, ShoppingBag, MessageCircle } from "lucide-react";
 import { useEffect } from "react";
 import { useCartStorage } from "@/hooks/useCartStorage";
-import { useMenu } from "@/features/menu/hooks";
-import type { CartType } from "@/types/Products";
-import type { ProductWithCategories } from "@/features/menu/api";
+import { useMenu, useOffer } from "@/features/menu/hooks";
+import type { OfferRowCart, ProductRowCart } from "@/types/Products";
+import { ItemOfferCart } from "./ItemOfferCart";
+import { ItemProductCart } from "./ItemProductCart";
+
+
+type Row = ProductRowCart | OfferRowCart;
 
 export default function Cart() {
   const { handlerClose, open } = useCart();
   const { data: cartData } = useCartStorage();
 
   const { data: menu } = useMenu();
-
+  const { data: offer } = useOffer();
 
   useEffect(() => {
     if (!open) return;
@@ -34,46 +37,80 @@ export default function Cart() {
     };
   }, [open, handlerClose]);
 
-  const data = cartData.map((c) => {
-    const item = menu?.find((m) => m.id === c.id);
-    const extras = c.extra.flatMap((e) => {
-      const found = item?.extras.find((i) => e === i.id);
-      return found ? [found] : [];
-    });
-    const priceExstra = extras.reduce((c, p) => {
-      const acc = c + p.price;
-      return acc;
-    }, 0);
-    const price = (Number(item?.price) + priceExstra) * c.quantity;
-    return { ...c, item: item, price, extras };
+  const data: Row[] = cartData.map((c): Row => {
+    if (c.type === "product") {
+      const item = menu?.find((m) => m.id === c.id);
+
+      const extras = (c.extra ?? []).flatMap((e) => {
+        const found = item?.extras.find((i: { id: number }) => e === i.id);
+        return found ? [found] : [];
+      });
+      const priceExtra = extras.reduce((c, p) => {
+        const acc = c + p.price;
+        return acc;
+      }, 0);
+      const price = (Number(item?.price) + priceExtra) * c.quantity;
+      return { ...c, type: "product", item: item, price, extras };
+    }
+    // offer
+    const item = offer?.find((m) => m.id === c.id);
+
+    const price = Number(item?.price) * c.quantity;
+    return { ...c, type: "offer", item: item, price };
   });
 
   const totalPrice = data.reduce((sum, i) => {
-    const acc = sum + i.price;
+    const acc = sum + (i?.price ?? 0);
     return acc;
   }, 0);
 
   function handleOrder() {
-    const msg = `🛒 *طلب جديد*
-━━━━━━━━━━━━━━
-*الطلبات: ${cartData.length} منتجات*
+    const product: ProductRowCart[] = data.filter((e) => e.type === "product");
+    const offers: OfferRowCart[] = data.filter((e) => e.type === "offer");
+    const message = `🛒 *طلب جديد*
+━━━━━━━━━━━━━━━━
+📦 *عدد الطلبات:*${cartData.length??0}
+━━━━━━━━━━━━━━━━
 
-${data
+${
+  offers.length > 0
+    ? `🎁 *العروض*
+
+▫️ ${offers
+        .map(
+          (o) =>
+            `*${o?.item?.title}* × ${o.quantity}
+   ${o.item?.description}
+   💵 ${o.price} جنيه`,
+        )
+        .join("\n\n")}
+
+━━━━━━━━━━━━━━━━`
+    : ""
+}
+
+🍽️ *الأصناف*
+
+${product
   .map(
-    (d) =>
-      `* - ${d.item?.name_ar} × ${d.quantity}
-     ${d.extras.length > 0 ? `الإضافات: ${d.extras.map((e) => e.name_ar).join(" و")}` : "من غير أضافات"}
-     السعر: ${d.price} جنيه`,
+    (p) => `▫️ *${p.item?.name_ar}* × ${p.quantity}
+  ${
+    p.extras.length > 0
+      ? `➕ الإضافات: ${p.extras.map((e) => e.name_ar).join(" و")}`
+      : "بدون أضافات"
+  }
+   💵 ${p.price} جنيه`,
   )
   .join("\n\n")}
 
-
-━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━
 💰 *الإجمالي:* ${totalPrice} جنيه
+🚚 مصاريف الشحن هتتحدد حسب المكان
 
-📝 *نتمني ليك يوم سعيد*`;
+📝 نتمنى لك يوم سعيد 🌹`;
+
     const phone = "+201008547013";
-    const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+    const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
     window.open(url, "_blank");
     localStorage.removeItem("products");
     window.location.reload();
@@ -146,9 +183,22 @@ ${data
 
             <div className="overflow-auto scrollbar-none">
               <div className="min-h-0 flex-1 px-5">
-                {data.map((item) => (
-                  <ItemCart key={item.id} data={item} />
-                ))}
+                {data
+                  .filter((e) => e.type === "offer")
+                  .map((item, i) => (
+                    <ItemOfferCart
+                      key={`${item.id}-${item.type}-${i}`}
+                      data={item}
+                    />
+                  ))}
+                {data
+                  .filter((e) => e.type === "product")
+                  .map((item, i) => (
+                    <ItemProductCart
+                      key={`${item.id}-${item.type}-${i}`}
+                      data={item}
+                    />
+                  ))}
               </div>
             </div>
 
@@ -157,10 +207,10 @@ ${data
                 <div className="my-3 border-t border-amber-200" />
                 <div className="px-5 py-4">
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-amber-900">كله ع بعضة</span>
+                    <span className="font-bold text-amber-900">المبلغ الإجمالي</span>
 
                     <span className="text-lg font-bold text-amber-700">
-                      {totalPrice} جنية
+                      {totalPrice} <small className="font-mono">جنية</small>
                     </span>
                   </div>
                   <p className="text-xs text-amber-700/60">
@@ -203,54 +253,4 @@ ${data
   );
 }
 
-function ItemCart({
-  data,
-}: {
-  data: CartType & {
-    price: number;
-    item?: ProductWithCategories;
-    extras?: ProductWithCategories["extras"];
-  };
-}) {
-  const { addItem, deleteItem } = useCartStorage();
-  return (
-    <div className="flex items-center justify-between gap-4 border-b border-amber-200/70 py-4">
-      {/* Product info */}
-      <div className="min-w-0 flex-1">
-        <h2 className="truncate text-sm font-semibold text-amber-900">
-          {data?.item?.name_ar}
-        </h2>
 
-        <p className="mt-1 text-xs text-amber-700/60">
-          {data.extra.length > 0 && "أضافة"}{" "}
-          {data.extras?.map((e) => e.name_ar).join(" و")}
-        </p>
-
-        <span className="mt-1 block text-sm font-bold text-amber-700">
-          {data?.price} جنية
-        </span>
-      </div>
-
-      {/* Quantity */}
-      <div className="flex shrink-0 items-center gap-2 rounded-full border border-amber-300 bg-white px-1.5 py-1">
-        <Button
-          text="-"
-          onClick={() => {
-            deleteItem(data);
-          }}
-        />
-
-        <span className="min-w-5 text-center text-sm font-bold text-amber-900">
-          {data.quantity}
-        </span>
-
-        <Button
-          text="+"
-          onClick={() => {
-            addItem(data);
-          }}
-        />
-      </div>
-    </div>
-  );
-}

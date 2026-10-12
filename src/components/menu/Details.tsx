@@ -44,11 +44,9 @@ export default function Details({
       quantity: quantity,
       extra: moreAdd ? moreAdd.map((e) => e.id) : [],
     };
-    addItem(res);
+    addItem({ ...res, type: "product" });
     onclick();
   }
-
-  // window.addEventListener("popstate", onclick);
 
   return (
     <Modal
@@ -63,7 +61,7 @@ export default function Details({
         // )
         <>
           <h1 className="text-sm my-5 flex justify-between clear-both text-amber-700 font-bold">
-            هتدفع دول بس
+            المبلغ
             <span>{total | 0} جنية</span>
           </h1>
 
@@ -77,7 +75,7 @@ export default function Details({
             onClick={handleCart}
           >
             {isExisting && ""}
-            ضيف في السلة يصحبي
+            أضافة الي السلة
           </Button>
         </>
       )}
@@ -124,7 +122,7 @@ export default function Details({
               {product.extras.length > 0 && (
                 <>
                   <h1 className="text-sm my-5 clear-both text-amber-700 font-bold">
-                    لو عاوز اضافة
+                    الأضافات
                   </h1>
 
                   <div className="flex flex-col gap-3">
@@ -158,9 +156,9 @@ export default function Details({
               )}
 
               <h1 className="text-sm my-5 flex justify-between clear-both text-amber-700 font-bold">
-                كام واحد هياكل
+                عدد الاطباق
                 <span>
-                  {quantity} {quantity > 1 ? "أشخاص" : "شخص"}
+                  {quantity} {quantity > 1 ? "اطباق" : "طبق"}
                 </span>
               </h1>
               <div

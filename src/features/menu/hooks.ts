@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { fetchMenu, updateCategories, updateName, updatePrice } from "./api";
+import { fetchMenu, fetchOffers, updateCategories, updateName, updatePrice } from "./api";
 import { message } from "antd";
 
 export function useMenu() {
@@ -54,4 +54,10 @@ export function useEditCategories() {
       message.success("تم التغير");
     },
   });
+}
+
+// offer
+
+export function useOffer() {
+  return useQuery({ queryKey: ["offers"], queryFn: fetchOffers });
 }
