@@ -16,20 +16,22 @@ export default function SectionCatItems() {
     );
   }
 
-  return dataCategories
-    ?.filter((c) => c.is_available)
-    .map((data) => (
-      <div key={data.id} data-category={data.slug} className="scroll-mt-36">
-        <Cat catName={data.name} />
-        <section className="grid grid-cols-2 gap-4">
-          {dataSections &&
-            !isLoading &&
-            dataSections
-              ?.filter((e) => e.categories?.id === data.id)
-              .map((product) => <Item product={product} key={product.id} />)}
-        </section>
-      </div>
-    ));
+  if (dataCategories?.length === 0) {
+    return <p className="text-[11px] text-center mt-3">المتجر خالي من المنتجات</p>;
+  }
+
+  return dataCategories?.map((data) => (
+    <div key={data.id} data-category={data.slug} className="scroll-mt-36">
+      <Cat catName={data.name} />
+      <section className="grid grid-cols-2 gap-4">
+        {dataSections &&
+          !isLoading &&
+          dataSections
+            ?.filter((e) => e.categories?.id === data.id)
+            .map((product) => <Item product={product} key={product.id} />)}
+      </section>
+    </div>
+  ));
 }
 
 export function ProductCardSkeleton() {

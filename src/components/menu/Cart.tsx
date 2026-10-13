@@ -8,7 +8,6 @@ import type { OfferRowCart, ProductRowCart } from "@/types/Products";
 import { ItemOfferCart } from "./ItemOfferCart";
 import { ItemProductCart } from "./ItemProductCart";
 
-
 type Row = ProductRowCart | OfferRowCart;
 
 export default function Cart() {
@@ -69,7 +68,7 @@ export default function Cart() {
     const offers: OfferRowCart[] = data.filter((e) => e.type === "offer");
     const message = `🛒 *طلب جديد*
 ━━━━━━━━━━━━━━━━
-📦 *عدد الطلبات:*${cartData.length??0}
+📦 *عدد الطلبات: ${cartData.length ?? 0} *
 ━━━━━━━━━━━━━━━━
 
 ${
@@ -88,15 +87,13 @@ ${
 ━━━━━━━━━━━━━━━━`
     : ""
 }
-
-🍽️ *الأصناف*
-
+${product.length > 0 && "🍽️ *الأصناف*"}
 ${product
   .map(
-    (p) => `▫️ *${p.item?.name_ar}* × ${p.quantity}
+    (p) => `▫️ *${p.item?.name}* × ${p.quantity}
   ${
     p.extras.length > 0
-      ? `➕ الإضافات: ${p.extras.map((e) => e.name_ar).join(" و")}`
+      ? `➕ الإضافات: ${p.extras.map((e) => e.name).join(" و")}`
       : "بدون أضافات"
   }
    💵 ${p.price} جنيه`,
@@ -105,7 +102,7 @@ ${product
 
 ━━━━━━━━━━━━━━━━
 💰 *الإجمالي:* ${totalPrice} جنيه
-🚚 مصاريف الشحن هتتحدد حسب المكان
+🚚 مصاريف الشحن كام؟
 
 📝 نتمنى لك يوم سعيد 🌹`;
 
@@ -207,7 +204,9 @@ ${product
                 <div className="my-3 border-t border-amber-200" />
                 <div className="px-5 py-4">
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-amber-900">المبلغ الإجمالي</span>
+                    <span className="font-bold text-amber-900">
+                      المبلغ الإجمالي
+                    </span>
 
                     <span className="text-lg font-bold text-amber-700">
                       {totalPrice} <small className="font-mono">جنية</small>
@@ -252,5 +251,3 @@ ${product
     </AnimatePresence>
   );
 }
-
-

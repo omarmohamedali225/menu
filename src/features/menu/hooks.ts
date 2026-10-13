@@ -27,7 +27,7 @@ export function useCategories() {
     select: (items): TypeCategory[] => {
       const map = new Map();
       items.forEach(
-        (e) => e.categories && map.set(e.categories.id, e.categories),
+        (e) => e.categories?.is_available && map.set(e.categories.id, e.categories),
       );
       return Array.from(map.values());
     },
