@@ -16,11 +16,11 @@ export default function SectionCatItems() {
     );
   }
 
-  if (dataCategories?.length === 0) {
-    return <p className="text-[11px] text-center mt-3">المتجر خالي من المنتجات</p>;
+  if (dataCategories?.filter(c=>c.is_available).length=== 0) {
+    return <p className="className11px] text-center mt-3">المتجر خالي من المنتجات</p>;
   }
 
-  return dataCategories?.map((data) => (
+  return dataCategories?.filter(c=>c.is_available).map((data) => (
     <div key={data.id} data-category={data.slug} className="scroll-mt-36">
       <Cat catName={data.name} />
       <section className="grid grid-cols-2 gap-4">
