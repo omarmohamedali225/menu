@@ -19,6 +19,29 @@
   }
 }
 
+
+.btn-anim{
+  position: relative;
+  overflow: hidden;
+}
+.btn-anim::after{
+  content: '';
+  position: absolute;
+  left: 0;
+  top:0;
+  background-color: rgba(2, 2, 2, 0.13);
+  width: 0px;
+  height: 0px;
+  border-radius: 50%;
+  animation: p .3s ease-in-out;
+}
+@keyframes p{
+
+}
+
+
+
+
 /* loading page */
 .loader {
   position: fixed;

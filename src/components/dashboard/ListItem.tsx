@@ -11,12 +11,12 @@ export function ListItem({
   icon?: React.ReactElement;
 }) {
   return (
-    <li className={`hover:bg-gray-600 transition-colors rounded`}>
+    <li className={`hover:bg-indigo-100 transition-colors rounded`}>
       <NavLink
         to={url}
         end
         className={({ isActive }) =>
-          `${isActive ? "bg-gray-700!" : ""} py-2 text-[13px] px-1 text-sm text-white! flex items-center gap-1`
+          `${isActive ? "bg-indigo-200! text-indigo-700!" : ""} py-2 font-semibold text-[13px] text-gray-600! px-1 text-sm flex items-center rounded-md gap-3`
         }
       >
         {icon}
