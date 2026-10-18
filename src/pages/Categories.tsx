@@ -1,4 +1,3 @@
-import CartHeader from "@/components/dashboard/CartHeader";
 import TableDashboard from "@/components/dashboard/TableDashboard";
 
 export default function Categories() {
