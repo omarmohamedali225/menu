@@ -1,6 +1,6 @@
 import { Dropdown, Modal } from "antd";
 import { Ellipsis } from "lucide-react";
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import AvailableSwitch from "./AvailableSwitch";
 import { useMenu, useRemoveCategory } from "@/features/menu/hooks";
 import type { TypeCategories } from "@/features/menu/api";
