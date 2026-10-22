@@ -1,4 +1,5 @@
-import { useCategories } from "@/features/menu/hooks";
+import { useCategories, useMenu } from "@/features/menu/hooks";
+import { CountProductsInCategory } from "@/helpers/helper";
 // import type { CategoriesType } from "@/types/Products";
 import { Tabs } from "antd";
 import { useEffect, useRef, useState } from "react";
@@ -9,7 +10,7 @@ export default function TabsCat() {
   const isClickScrolling = useRef(false);
 
   const { data: categories, isLoading: categoriesLoad } = useCategories();
-
+  const { data: products } = useMenu();
   useEffect(() => {
     const interSection = new IntersectionObserver(
       (entries) => {
@@ -54,7 +55,11 @@ export default function TabsCat() {
 
   // handleTabs
   const dataTabs = categories
-    ?.filter((c) => c.is_available)
+    ?.filter(
+      (c) =>
+        c.is_available &&
+        CountProductsInCategory(products ?? [], c.id).get(c.id) > 0,
+    )
     .map((cat) => {
       return {
         key: cat.slug ?? String(cat.slug),
@@ -71,7 +76,7 @@ export default function TabsCat() {
   }
 
   return (
-    <div className="bg-gray-100 sticky top-20 z-50">
+    <div className="bg-gray-50 sticky top-20 z-50">
       {dataTabs && (
         <Tabs
           activeKey={activeId ? activeId : dataTabs[0]?.key}

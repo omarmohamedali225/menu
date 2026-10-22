@@ -5,6 +5,8 @@
   --font-main: "Alexandria", sans-serif;
   --color-main: #fffbeb;
   --color-accent: #fcd34d;
+  --color-primary: #312c85;
+  --color-mute: #99a1af;
 }
 
 @layer base {
@@ -19,28 +21,23 @@
   }
 }
 
-
-.btn-anim{
+.btn-anim {
   position: relative;
   overflow: hidden;
 }
-.btn-anim::after{
-  content: '';
+.btn-anim::after {
+  content: "";
   position: absolute;
   left: 0;
-  top:0;
+  top: 0;
   background-color: rgba(2, 2, 2, 0.13);
   width: 0px;
   height: 0px;
   border-radius: 50%;
-  animation: p .3s ease-in-out;
+  animation: p 0.3s ease-in-out;
 }
-@keyframes p{
-
+@keyframes p {
 }
-
-
-
 
 /* loading page */
 .loader {
@@ -53,7 +50,9 @@
   justify-content: center;
   gap: 36px;
   background: radial-gradient(circle at 50% 40%, #2b1d12, #140d08);
-  transition: opacity 0.6s ease, visibility 0.6s ease;
+  transition:
+    opacity 0.6s ease,
+    visibility 0.6s ease;
 }
 
 .loader--hide {
@@ -146,9 +145,17 @@
   opacity: 0;
   animation: rise 2.4s ease-in infinite;
 }
-.s1 { left: 42%; }
-.s2 { left: 52%; animation-delay: 0.15s; }
-.s3 { left: 62%; animation-delay: 0.3s; }
+.s1 {
+  left: 42%;
+}
+.s2 {
+  left: 52%;
+  animation-delay: 0.15s;
+}
+.s3 {
+  left: 62%;
+  animation-delay: 0.3s;
+}
 
 /* النص */
 .loader__text {
@@ -164,25 +171,59 @@
 }
 
 @keyframes lift {
-  0%, 25%   { transform: translateY(0) rotate(0); }
-  45%, 75%  { transform: translate(18px, -52px) rotate(-14deg); }
-  95%, 100% { transform: translateY(0) rotate(0); }
+  0%,
+  25% {
+    transform: translateY(0) rotate(0);
+  }
+  45%,
+  75% {
+    transform: translate(18px, -52px) rotate(-14deg);
+  }
+  95%,
+  100% {
+    transform: translateY(0) rotate(0);
+  }
 }
 
 @keyframes rise {
-  0%, 35% { opacity: 0; transform: translateY(0) scaleX(1); }
-  55%     { opacity: 0.7; }
-  100%    { opacity: 0; transform: translateY(-60px) scaleX(2.2); }
+  0%,
+  35% {
+    opacity: 0;
+    transform: translateY(0) scaleX(1);
+  }
+  55% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-60px) scaleX(2.2);
+  }
 }
 
 @keyframes glow {
-  0%, 35%, 100% { box-shadow: 0 0 10px rgba(244, 163, 64, 0.2); }
-  55%, 75%      { box-shadow: 0 0 34px rgba(244, 163, 64, 0.7); }
+  0%,
+  35%,
+  100% {
+    box-shadow: 0 0 10px rgba(244, 163, 64, 0.2);
+  }
+  55%,
+  75% {
+    box-shadow: 0 0 34px rgba(244, 163, 64, 0.7);
+  }
 }
 
 @keyframes dots {
-  0%   { content: ""; }
-  25%  { content: "."; }
-  50%  { content: ".."; }
-  75%, 100% { content: "..."; }
+  0% {
+    content: "";
+  }
+  25% {
+    content: ".";
+  }
+  50% {
+    content: "..";
+  }
+  75%,
+  100% {
+    content: "...";
+  }
 }

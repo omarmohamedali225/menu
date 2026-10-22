@@ -9,7 +9,7 @@ export default function DashLayout() {
     <Flex>
       <DrawerContext>
         <Drawer />
-        <div className="w-[calc(100%-240px)] max-md:w-full! mr-auto bg-gray-50">
+        <div className="w-[calc(100%-240px)] max-md:w-full! mr-auto">
           <NavDash />
           <div className="mt-17.25"></div>
           <Outlet />
@@ -18,12 +18,31 @@ export default function DashLayout() {
     </Flex>
   );
 }
+
+// function subscribe(cb: () => void) {
+//   window.addEventListener("online", cb);
+//   window.addEventListener("offline", cb);
+//   return () => {
+//     window.removeEventListener("online", cb);
+//     window.removeEventListener("offline", cb);
+//   };
+// }
+// function getSnapshot() {
+//   return navigator.onLine;
+// }
+
 function NavDash() {
   const { handlerOpen } = useDrawer();
+  // const isOnline = useSyncExternalStore(subscribe, getSnapshot);
+
+
   return (
     <div className="fixed top-0 w-[calc(100%-240px)] max-md:w-full! z-10 bg-white p-5 flex items-center justify-between border-b-2 border-b-gray-100">
       <div className="flex gap-2">
-        <Menu onClick={handlerOpen} className="md:hidden active:scale-95 cursor-pointer"/>
+        <Menu
+          onClick={handlerOpen}
+          className="md:hidden active:scale-95 cursor-pointer"
+        />
         <h1 className="text-lg">لوحه التحكم</h1>
       </div>
       <p className="text-gray-400 text-[11px]">حساب تجريبي</p>

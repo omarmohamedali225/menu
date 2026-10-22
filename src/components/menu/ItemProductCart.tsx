@@ -11,7 +11,11 @@ export function ItemProductCart({ data }: { data: ProductRowCart }) {
         <h2 className="truncate text-sm font-semibold text-amber-900">
           {data.item?.name}
         </h2>
-
+        {!data.item?.is_available && (
+          <p className="bg-red-200 w-fit px-2 text-[11px] rounded-lg">
+            ملاحظة ليس متوفر حاليا
+          </p>
+        )}
         <p className="mt-1 text-xs text-amber-700/60">
           {/* {data.extra.length > 0 && "أضافة"}{" "} */}
           {data.extras?.map((e) => e.name).join(" و")}

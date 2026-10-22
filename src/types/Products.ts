@@ -18,6 +18,11 @@ export interface ProductsType {
 
 export type TypeProduct = Database["public"]["Tables"]["products"]["Row"];
 export type TypeCategory = Database["public"]["Tables"]["categories"]["Row"];
+export type TypeInsertProduct = Database["public"]["Tables"]["products"]["Insert"];
+export type TypeInsertOffer = Database["public"]["Tables"]["offers"]["Insert"];
+export type TypeInsertCategory = Database["public"]["Tables"]["categories"]["Insert"];
+export type TypeInsertExtra = Database["public"]["Tables"]["extras"]["Insert"];
+
 
 export interface CartType {
   type: "product" | "offer";

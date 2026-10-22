@@ -6,6 +6,7 @@ import Details from "./Details";
 import type { ProductWithCategories } from "@/features/menu/api";
 import useBack from "@/hooks/useBack";
 import { message } from "antd";
+import { useCartStorage } from "@/hooks/useCartStorage";
 // import type { CartType } from "@/types/Products";
 
 export default function Item({ product }: { product: ProductWithCategories }) {
@@ -19,23 +20,12 @@ export default function Item({ product }: { product: ProductWithCategories }) {
     };
   }, [selectProduct]);
 
-  // const { data, addItem, deleteItem } = useCartStorage();
-
-  // const exist = data.find((e) => e.id === product.id && e.type === "product");
-
-  // const handleAdd = (p: ProductWithCategories) => {
-  //   const data: CartType = {
-  //     type: "product",
-  //     id: p.id,
-  //     extra: [],
-  //     quantity: 1,
-  //   };
-  //   addItem(data);
-  // };
-
   const { addEventModal } = useBack(!!selectProduct, () =>
     setSelectProduct(null),
   );
+
+  const { data, addItem } = useCartStorage();
+  const exist = data.find((e) => e.id === product.id && e.type === "product");
 
   return (
     <>
@@ -50,21 +40,22 @@ export default function Item({ product }: { product: ProductWithCategories }) {
         viewport={{ once: true }}
         className="bg-white flex flex-col sm:flex-row p-2 rounded-2xl select-none group border border-amber-100 shadow"
       >
-        <div className="relative w-full h-28 sm:w-26 md:h-26 shrink-0 overflow-hidden">
-          <img
-            // src={
-            //   "https://placehold.co/600x600/fef3c7/b45309/webp?text=" +
-            //   product.name
-            // }
+        {/* <div className="relative w-full h-28 sm:w-26 md:h-26 shrink-0 overflow-hidden"> */}
+          {/* <img
+            src={
+              "https://placehold.co/600x600/fef3c7/b45309/webp?text=" +
+              product.name
+            }
             className="w-full h-full aspect-square object-cover group-hover:scale-105 transition-transform"
             alt={""}
-          />
+          /> */}
+          {/* <div className="w-full h-full border"></div>
           {!product.is_available && (
-            <span className="absolute flex-1 top-2 left-2 bg-red-200 px-2 py-1 text-[11px] rounded">
-              المنتج غير متوفر
+            <span className="absolute flex-1 top-2 left-2 bg-red-200 text-red-950 px-2 py-1 text-[10px] rounded">
+              مش متوفر
             </span>
           )}
-        </div>
+        </div> */}
         <div className="p-2 flex flex-col flex-1  space-y-2">
           <h1>{product.name}</h1>
           {product.extras.filter((e) => e.is_available).length > 0 && (
@@ -72,11 +63,51 @@ export default function Item({ product }: { product: ProductWithCategories }) {
               إضافات متاحة
             </p>
           )}
-          <div className="flex mt-auto justify-between items-center">
-            <h2 className="text-lg text-amber-700 font-extrabold text-left mr-auto">
+          {!product.is_available && (
+            <span className="bg-red-200 max-w-fit text-red-950 px-2 py-1 text-[10px] rounded">
+              غير متوفر حاليا
+            </span>
+          )}
+          <div>
+            <h2 className="text-lg text-amber-700 font-extrabold">
               {product.price}{" "}
               <small className="font-normal text-xs">جنية</small>
             </h2>
+
+            {product.extras.length > 0 ? (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (!product.is_available)
+                    return message.info("المنتج غير متوفر");
+                  setSelectProduct(product);
+                  addEventModal();
+                }}
+                className="float-end border-primary border-2 text-[12px] px-1 py-0.5 rounded-lg text-primary cursor-pointer hover:bg-primary hover:text-white transition-colors duration-150"
+              >
+                عرض تفاصيل
+              </button>
+            ) : (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (!product.is_available)
+                    return message.info("المنتج غير متوفر");
+
+                  addItem({
+                    id: product.id,
+                    quantity: 1,
+                    type: "product",
+                    extra: [],
+                  });
+                }}
+                className="float-end border-primary border-2 text-[12px] px-1 py-0.5 rounded-lg text-primary cursor-pointer hover:bg-primary hover:text-white transition-colors duration-150"
+              >
+                {exist?.quantity ? "متضاف" : "اضف"} للعربة{" "}
+                <small>{exist?.quantity}</small>
+              </button>
+            )}
+
             {/* {!exist ? (
               <button
                 className="rounded-full text-3xl cursor-pointer hover:bg-[#7a2f00d0] transition-colors bg-[#7A2E00] text-[#FBEACB] w-11 h-11 shadow shrink-0"

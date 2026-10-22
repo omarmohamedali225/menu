@@ -1,6 +1,7 @@
 import Cat from "@/components/menu/Cat";
 import Item from "./Item";
 import { useCategories, useMenu } from "@/features/menu/hooks";
+import { CountProductsInCategory } from "@/helpers/helper";
 
 export default function SectionCatItems() {
   const { data: dataSections, isLoading } = useMenu();
@@ -26,7 +27,8 @@ export default function SectionCatItems() {
     ?.filter((c) => c.is_available)
     .map((data) => (
       <div key={data.id} data-category={data.slug} className="scroll-mt-36">
-        <Cat catName={data.name} />
+        {CountProductsInCategory(dataSections ?? [], data.id).get(data.id) >
+          0 && <Cat catName={data.name} />}
         <section className="grid grid-cols-2 gap-4">
           {dataSections &&
             !isLoading &&

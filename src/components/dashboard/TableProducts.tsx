@@ -7,8 +7,17 @@ import {
   useEditPrice,
   useExtras,
   useMenu,
+  useRemoveProduct,
 } from "@/features/menu/hooks";
-import { Dropdown, Form, Input, Modal, Select, Table } from "antd";
+import {
+  Dropdown,
+  Form,
+  Input,
+  Modal,
+  Select,
+  Table,
+  type TableColumnsType,
+} from "antd";
 import { Ellipsis } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -22,7 +31,7 @@ type Type = {
   extra: { name: string; id: number }[];
   is_available: boolean;
 };
-export default function TableDashboard() {
+export default function TableProducts() {
   const [editing, setEditing] = useState<{
     id: number;
     field: string;
@@ -38,6 +47,8 @@ export default function TableDashboard() {
   const [search, setSearch] = useState("");
   const [selectEdit, setSelectEdit] = useState<Type | null>(null);
   const { mutate, isPending } = useEdit();
+  const { mutate: removeProduct, isPending: loadRemoveProduct } =
+    useRemoveProduct();
 
   function tableLoad() {
     return (
@@ -47,7 +58,8 @@ export default function TableDashboard() {
       loadMenu ||
       loadExtra ||
       loadEditCat ||
-      loadAvailble
+      loadAvailble ||
+      loadRemoveProduct
     );
   }
 
@@ -55,7 +67,32 @@ export default function TableDashboard() {
     return editing?.id === id && editing.field === field;
   }
 
-  const columns = [
+  const data =
+    menu
+      ?.map((m) => ({
+        id: m.id ?? 0,
+        name: m.name ?? "-",
+        category: {
+          id: m?.categories?.id ?? "",
+          name: m?.categories?.name ?? "",
+        },
+        categoryId: m.category_id ?? "-",
+        price: m.price ?? "-",
+        countExtra: m.extras.length ?? 0,
+        extra: m.extras.map((e) => ({ id: e.id, name: e.name })) ?? {
+          id: 0,
+          name: "-",
+        },
+        is_available: m.is_available ?? false,
+      }))
+      .filter((e) => {
+        const n = e.name.includes(search);
+        return n;
+      }) ?? [];
+
+  type P = NonNullable<typeof data>[number];
+
+  const columns: TableColumnsType<P> = [
     {
       title: "اسم الصنف",
       dataIndex: "name",
@@ -90,12 +127,17 @@ export default function TableDashboard() {
       dataIndex: "category",
       key: "category",
       width: 100,
-      // filters: categories?.map((e) => ({ text: e.name, value: e.name })),
-      // onFilter: (v: unknown, r: unknown) => r?.category.includes(v),
-      render: (_: unknown, p: Type) =>
+      filters: (categories ?? []).map((e) => ({
+        text: e.name as string,
+        value: e.name as string,
+      })),
+      onFilter: (v, r) => r.category.name.includes(String(v)),
+      render: (_, p) =>
         isEditing(p.id, "category") ? (
           <Select
+            classNames={{ content: "w-[150px]!" }}
             defaultValue={p.category}
+            value={p.category}
             defaultOpen
             options={categories?.map((e) => ({
               value: e.id,
@@ -138,11 +180,16 @@ export default function TableDashboard() {
       dataIndex: "status",
       key: "status",
       width: 120,
+      filters: [
+        { text: "متاح", value: true },
+        { text: "غير متوفر", value: false },
+      ],
+      onFilter: (v, r) => r.is_available === v,
       render: (_: unknown, p: Type) =>
         isEditing(p.id, "status") ? (
           <Select
             size="small"
-            classNames={{ content: "w-full!" }}
+            classNames={{ content: "w-[150px]!" }}
             defaultValue={p.is_available}
             defaultOpen
             options={[
@@ -216,6 +263,10 @@ export default function TableDashboard() {
             onClick: (e) => {
               if (e.key === "1") {
                 setSelectEdit(p);
+                return;
+              }
+              if (e.key === "2") {
+                removeProduct(p.id);
               }
             },
           }}
@@ -227,50 +278,12 @@ export default function TableDashboard() {
     },
   ];
 
-  const data = menu
-    ?.map((m) => ({
-      id: m.id ?? 0,
-      name: m.name ?? "-",
-      category: {
-        id: m?.categories?.id ?? "",
-        name: m?.categories?.name ?? "",
-      },
-      categoryId: m.category_id ?? "-",
-      price: m.price ?? "-",
-      countExtra: m.extras.length ?? 0,
-      extra: m.extras.map((e) => ({ id: e.id, name: e.name })) ?? {
-        id: 0,
-        name: "----",
-      },
-      is_available: m.is_available ?? false,
-    }))
-    .filter((e) => {
-      const n = e.name.includes(search);
-      return n;
-    });
-
-  // useEffect(() => {
-  //   const s = data?.filter((e) => {
-  //     const n = e.name.includes(search);
-  //     const c = e.category.includes(search);
-  //     return;
-  //   });
-  //   console.log({ s });
-  // }, [search, data]);
-
   const [form] = Form.useForm();
 
   useEffect(() => {
     if (!selectEdit) return;
     form.resetFields();
     form.setFieldsValue({
-      // name: selectEdit?.name,
-      // category: {
-      //   key: selectEdit?.category.id,
-      //   label: selectEdit?.category.name,
-      //   value: selectEdit?.category.id,
-      // },
-      // price: selectEdit?.price,
       extras: selectEdit?.extra.map((e) => ({
         key: e.id,
         label: e.name,
@@ -315,22 +328,13 @@ export default function TableDashboard() {
         }}
         cancelText="الغاء"
         onCancel={() => {
-          console.log(selectEdit);
           setSelectEdit(null);
-          console.log(selectEdit);
         }}
       >
         <h1 className="text-xl font-medium mb-5">تعديل منتج</h1>
         <Form
           form={form}
           initialValues={{
-            // name: selectEdit?.name,
-            // category: {
-            //   key: selectEdit?.category.id,
-            //   label: selectEdit?.category.name,
-            //   value: selectEdit?.category.id,
-            // },
-            // price: selectEdit?.price,
             extras: selectEdit?.extra.map((e) => ({
               key: e.id,
               label: e.name,
@@ -342,10 +346,7 @@ export default function TableDashboard() {
               mutate(
                 {
                   id: selectEdit.id,
-                  // categoryId: v.category.value,
                   extras: v.extras.map((e: number) => e),
-                  // name: v.name,
-                  // price: v.price,
                 },
                 { onSuccess: () => setSelectEdit(null) },
               );
@@ -353,23 +354,6 @@ export default function TableDashboard() {
           }}
           layout="vertical"
         >
-          {/* <Form.Item name={"name"} label={"اسم المنتج"}>
-            <Input placeholder="برجر او سندوتش اكسترا" />
-          </Form.Item>
-          <Form.Item name="category" label={"التصنيف"}>
-            <Select
-              placeholder="تابع لتصنيف ايه"
-              showSearch
-              options={categories?.map((c) => ({
-                key: c.id,
-                label: c.name,
-                value: c.id,
-              }))}
-            />
-          </Form.Item>
-          <Form.Item name="price" label={"تسعيره المنتج"}>
-            <Input placeholder="السعر" />
-          </Form.Item> */}
           <Form.Item name={"extras"} label={"اضافات"}>
             <Select
               placeholder="سيبها فاضية لو مش عايز اضافات"
@@ -379,6 +363,7 @@ export default function TableDashboard() {
                 value: e.id,
               }))}
               mode="multiple"
+              classNames={{ root: "w-[70%]!" }}
             />
           </Form.Item>
         </Form>

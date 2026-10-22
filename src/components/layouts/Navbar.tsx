@@ -38,15 +38,12 @@ export default function Navbar() {
             {/* <Button text={t("btnChangeLocal")} onClick={handleLocal} /> */}
             <Button onClick={handlerOpen}>
               <ShoppingCart size={18} />
-              {data.length>0 && (
+              {data.length > 0 && (
                 <span className="absolute -top-2 ltr:-right-2 rtl:-left-2 bg-amber-900 text-amber-100 p-1 rounded-full min-w-5 h-5 text-[10px] flex justify-center items-center border border-amber-50">
                   {data.length}
                 </span>
               )}
             </Button>
-
-            {/* <button className="relative bg-amber-100 text-amber-900 rounded-full py-1 px-2 font-bold text-xs hover:bg-amber-200 transition-colors">
-            </button> */}
           </div>
         </div>
       </div>

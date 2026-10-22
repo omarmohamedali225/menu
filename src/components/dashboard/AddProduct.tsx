@@ -1,69 +1,112 @@
-import { Button, Form, Input, Modal, Select, Space } from "antd";
+// import { useAddProduct } from "@/features/menu/hooks";
+import { useAddProduct, useCategories } from "@/features/menu/hooks";
+import { Form, Input, Modal, Select } from "antd";
 import React from "react";
 
 export default function AddProduct() {
   const [open, setOpen] = React.useState(false);
+  const { mutate: add, isPending } = useAddProduct();
+  const { data: categories } = useCategories();
+  const [form] = Form.useForm();
   return (
-    <>
-      <Button onClick={() => setOpen(true)} className="">اضافة منتج</Button>
+    <div className="flex justify-end">
+      <button
+        onClick={() => setOpen(true)}
+        className="border-primary border-2 px-2 py-1 rounded-lg text-primary cursor-pointer hover:bg-primary hover:text-white transition-colors duration-150"
+      >
+        اضافة منتج
+      </button>
       <Modal
+        transitionName=""
+        maskTransitionName=""
         open={open}
-        onCancel={() => setOpen(false)}
+        onCancel={() => {
+          setOpen(false);
+          form.resetFields();
+        }}
         footer={false}
         closable={false}
+        title={"أضافة منتج"}
       >
+        <p>الخاصية دي لا تعمل حاليا</p>
         <Form
-          initialValues={{}}
+          form={form}
+          initialValues={{ name: null, price: null, category: null }}
           onFinish={(val) => {
-            console.log(val);
+            add(
+              {
+                name: val.name,
+                price: val.price,
+                category_id: val.category,
+              },
+              { onSuccess: () => setOpen(false) },
+            );
           }}
+          layout="vertical"
         >
-          <div className="flex gap-2">
-            <Form.Item name={"name"} className="flex-1">
-              <Input placeholder="اسم المنتج" />
-            </Form.Item>
+          <Form.Item
+            name={"name"}
+            className="flex-1"
+            label={"الاسم"}
+            rules={[
+              {
+                required: true,
+                min: 3,
+                message: "اسم المنتج مطلوب اقل حاجه 3 حروف",
+              },
+            ]}
+          >
+            <Input id="name" placeholder="كفته او كوارع مثلا" />
+          </Form.Item>
+          <Form.Item
+            name={"category"}
+            className="flex-1"
+            label={"التصنيف"}
+            rules={[
+              {
+                required: true,
+                message: "التصنيف مطلوب",
+              },
+            ]}
+          >
+            <Select
+              showSearch={{ optionFilterProp: "label" }}
+              id="category"
+              placeholder="اختار تصنيف"
+              options={categories?.map((c) => ({
+                key: c.id,
+                label: c.name,
+                value: c.id,
+              }))}
+              placement="topLeft"
+            />
+          </Form.Item>
+          <Form.Item
+            name={"price"}
+            className="flex-1"
+            label={"السعر"}
+            rules={[
+              {
+                required: true,
+                message: "السعر مطلوب",
+              },
+            ]}
+          >
+            <Input id="price" placeholder="10 او 40 مثلا" />
+          </Form.Item>
 
-            <Form.Item name={"category"}>
-              <Select placeholder={"التصنيف"} />
-            </Form.Item>
-          </div>
-          <div className="flex gap-2">
-            <Form.Item name={"price"} className="flex-1">
-              <Input placeholder="السعر" />
-            </Form.Item>
-
-            <Form.Item name={"discount"}>
-              <Input placeholder="الخصم" type={"number"} />
-            </Form.Item>
-          </div>
-          <Space wrap>
-            <Form.List name={"extra"}>
-              {(field, { add }) => (
-                <>
-                  {field.map(({ key, name }) => (
-                    <Space wrap className="flex gap-2" key={key}>
-                      <Form.Item name={name} className="flex-1">
-                        <Input placeholder="الاسم" />
-                      </Form.Item>
-
-                      <Form.Item name={name}>
-                        <Input placeholder="السعر" type={"number"} />
-                      </Form.Item>
-                    </Space>
-                  ))}
-                  <Button onClick={() => add()} className="w-fit mr-2">
-                    + اضافة
-                  </Button>
-                </>
-              )}
-            </Form.List>
-          </Space>
-
-          <Button type={"primary"} htmlType="submit">
-            اضافة صنف
-          </Button>
+          <button
+            disabled={isPending}
+            type="submit"
+            className="w-full flex justify-center gap-1 mt-2 border-primary border-2 px-2 py-1 rounded-lg text-primary cursor-pointer hover:bg-primary hover:text-white transition-colors duration-150"
+          >
+            اضافة تصنيف
+            {isPending && (
+              <span className="w-6 h-6 border-2 border-l-transparent block rounded-full animate-spin"></span>
+            )}
+          </button>
         </Form>
       </Modal>
-    </>
+    </div>
   );
 }
