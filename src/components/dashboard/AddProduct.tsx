@@ -1,5 +1,5 @@
-// import { useAddProduct } from "@/features/menu/hooks";
-import { useAddProduct, useCategories } from "@/features/menu/hooks";
+// import { useAddProduct } from "@/features/dashboard/hooks";
+import { useAddProduct, useCategories } from "@/features/dashboard/hooks";
 import { Form, Input, Modal, Select } from "antd";
 import React from "react";
 

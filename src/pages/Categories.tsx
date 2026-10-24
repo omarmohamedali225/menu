@@ -1,6 +1,6 @@
 import AddCategory from "@/components/dashboard/AddCategory";
 import ItemCategory from "@/components/dashboard/ItemCategory";
-import { useCategories } from "@/features/menu/hooks";
+import { useCategories } from "@/features/dashboard/hooks";
 
 export default function Categories() {
   const { data, isLoading, isError } = useCategories();

@@ -1,6 +1,6 @@
 import AddOffer from "@/components/dashboard/AddOffer";
 import ItemOffer from "@/components/dashboard/ItemOffer";
-import { useOffer } from "@/features/menu/hooks";
+import { useOffer } from "@/features/dashboard/hooks";
 
 export default function Offers() {
   const { data, isLoading, isError } = useOffer();

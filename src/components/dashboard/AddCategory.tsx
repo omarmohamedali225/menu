@@ -1,4 +1,4 @@
-import { useAddCategory } from "@/features/menu/hooks";
+import { useAddCategory } from "@/features/dashboard/hooks";
 import { Form, Input, Modal } from "antd";
 import { useState } from "react";
 

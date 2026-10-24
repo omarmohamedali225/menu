@@ -2,7 +2,7 @@ import { Dropdown, Modal } from "antd";
 import { Ellipsis } from "lucide-react";
 import { useMemo, useState } from "react";
 import AvailableSwitch from "./AvailableSwitch";
-import { useMenu, useRemoveCategory } from "@/features/menu/hooks";
+import { useMenu, useRemoveCategory } from "@/features/dashboard/hooks";
 import type { TypeCategories } from "@/features/menu/api";
 
 export default function ItemCategory({ data }: { data: TypeCategories }) {

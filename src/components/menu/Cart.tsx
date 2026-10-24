@@ -1,18 +1,23 @@
 import { useCart } from "@/contexts/CartContext";
 import { AnimatePresence, motion } from "motion/react";
 import { X, ShoppingBag, MessageCircle } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useCartStorage } from "@/hooks/useCartStorage";
-import { useMenu, useOffer } from "@/features/menu/hooks";
+import { useMenu, useOffer, useProfile } from "@/features/menu/hooks";
 import type { OfferRowCart, ProductRowCart } from "@/types/Products";
 import { ItemOfferCart } from "./ItemOfferCart";
 import { ItemProductCart } from "./ItemProductCart";
+import { NumberAr } from "@/helpers/helper";
+import { Form, Input, Modal } from "antd";
+import TextArea from "antd/es/input/TextArea";
 
 type Row = ProductRowCart | OfferRowCart;
 
 export default function Cart() {
   const { handlerClose, open } = useCart();
   const { data: cartData } = useCartStorage();
+  const [order, setOrder] = useState(false);
+  const { data: profile } = useProfile();
 
   const { data: menu } = useMenu();
   const { data: offer } = useOffer();
@@ -63,78 +68,87 @@ export default function Cart() {
     return acc;
   }, 0);
 
-  function handleOrder() {
+  function handleOrder(val: { name: string; address: string; note: string }) {
+    const { name, address, note } = val;
+
     const product: ProductRowCart[] = data.filter((e) => e.type === "product");
     const offers: OfferRowCart[] = data.filter((e) => e.type === "offer");
-    const message = `🛒 *طلب جديد*
-━━━━━━━━━━━━━━━━
-📦 *عدد الطلبات: ${cartData.length ?? 0} *
-━━━━━━━━━━━━━━━━
 
-${
-  offers.length > 0
-    ? `🎁 *العروض*
+    const entries = [
+      ...offers.map((o) => ({
+        name: o.item?.title,
+        qty: o.quantity,
+        price: o.price,
+        detail: o.item?.description ?? "",
+      })),
+      ...product.map((p) => ({
+        name: p.item?.name,
+        qty: p.quantity,
+        price: p.price,
+        detail:
+          p.extras.length > 0
+            ? `إضافات: ${p.extras.map((e) => e.name).join("، ")}`
+            : "",
+      })),
+    ];
 
-▫️ ${offers
-        .map(
-          (o) =>
-            `*${o?.item?.title}* × ${o.quantity}
-   ${o.item?.description}
-   💵 ${o.price} جنيه`,
-        )
-        .join("\n\n")}
+    const rows = entries
+      .map(
+        (r) =>
+          `*${r.name}* (×${r.qty})\n` +
+          (r.detail ? `_${r.detail}_\n` : "") +
+          `${r.price} جنيه`,
+      )
+      .join("\n\n");
 
-━━━━━━━━━━━━━━━━`
-    : ""
-}
-${product.length > 0 && "🍽️ *الأصناف*"}
-${product
-  .map(
-    (p) => `▫️ *${p.item?.name}* × ${p.quantity}
-  ${
-    p.extras.length > 0
-      ? `➕ الإضافات: ${p.extras.map((e) => e.name).join(" و")}`
-      : "بدون أضافات"
-  }
-   💵 ${p.price} جنيه`,
-  )
-  .join("\n\n")}
+    const customerInfo =
+      `*الاسم:* ${name}\n` +
+      `*العنوان:* ${address}` +
+      (note?.trim() ? `\n*ملاحظة:* ${note.trim()}` : "");
 
-━━━━━━━━━━━━━━━━
-💰 *الإجمالي:* ${totalPrice} جنيه
-🚚 مصاريف الشحن كام؟
+    const message = `*طلب جديد*
 
-📝 نتمنى لك يوم سعيد 🌹`;
+${customerInfo}
 
-    const phone = "+201008547013";
+─────────────
+${rows}
+
+─────────────
+*الإجمالي: ${totalPrice} جنيه*
+
+نرجو تأكيد العنوان لنوافيكم بتكلفة التوصيل ووقت الاستلام المتوقع.
+
+شكرًا لثقتكم بنا.`;
+    const phone = "+2" + profile?.phone;
     const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
     window.open(url, "_blank");
-    localStorage.removeItem("products");
+    localStorage.removeItem(`cart:${profile?.id}`);
     window.location.reload();
   }
 
   return (
-    <AnimatePresence>
-      {open && (
-        <div className="fixed inset-0 flex items-center justify-center p-3 z-100">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-            onClick={handlerClose}
-          />
+    <>
+      <AnimatePresence>
+        {open && (
+          <div className="fixed inset-0 flex items-center justify-center p-3 z-100">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+              onClick={handlerClose}
+            />
 
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 15 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 15 }}
-            transition={{
-              duration: 0.25,
-              ease: "easeOut",
-            }}
-            className="
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              transition={{
+                duration: 0.25,
+                ease: "easeOut",
+              }}
+              className="
               relative z-10
               flex flex-col
               w-full max-w-lg
@@ -144,28 +158,28 @@ ${product
               bg-amber-50
               shadow-2xl
             "
-          >
-            <div className="flex shrink-0 items-center justify-between border-b border-amber-200 px-5 py-4">
-              <div className="flex items-center gap-2">
-                <ShoppingBag size={20} className="text-amber-700" />
+            >
+              <div className="flex shrink-0 items-center justify-between border-b border-amber-200 px-5 py-4">
+                <div className="flex items-center gap-2">
+                  <ShoppingBag size={20} className="text-amber-700" />
 
-                <div>
-                  <h1 className="font-bold text-lg text-amber-800">
-                    عربة التسوق
-                  </h1>
+                  <div>
+                    <h1 className="font-bold text-lg text-amber-800">
+                      عربة التسوق
+                    </h1>
 
-                  <p className="text-xs text-amber-700/60">
-                    {cartData.length > 0
-                      ? `عربيتك فيها ${cartData.length} منتج`
-                      : "عربية كحيانه مفهاش حاجة"}
-                  </p>
+                    <p className="text-xs text-amber-700/60">
+                      {cartData.length > 0
+                        ? `عربيتك فيها ${NumberAr(cartData.length)} منتج`
+                        : "عربيتك مفهاش حاجة"}
+                    </p>
+                  </div>
                 </div>
-              </div>
 
-              <button
-                type="button"
-                onClick={handlerClose}
-                className="
+                <button
+                  type="button"
+                  onClick={handlerClose}
+                  className="
                   flex h-9 w-9
                   items-center justify-center
                   rounded-full
@@ -173,52 +187,53 @@ ${product
                   transition
                   hover:bg-amber-100
                 "
-              >
-                <X size={20} />
-              </button>
-            </div>
-
-            <div className="overflow-auto scrollbar-none">
-              <div className="min-h-0 flex-1 px-5">
-                {data
-                  .filter((e) => e.type === "offer")
-                  .map((item, i) => (
-                    <ItemOfferCart
-                      key={`${item.id}-${item.type}-${i}`}
-                      data={item}
-                    />
-                  ))}
-                {data
-                  .filter((e) => e.type === "product")
-                  .map((item, i) => (
-                    <ItemProductCart
-                      key={`${item.id}-${item.type}-${i}`}
-                      data={item}
-                    />
-                  ))}
+                >
+                  <X size={20} />
+                </button>
               </div>
-            </div>
 
-            {data.length > 0 ? (
-              <>
-                <div className="my-3 border-t border-amber-200" />
-                <div className="px-5 py-4">
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-amber-900">
-                      المبلغ الإجمالي
-                    </span>
+              <div className="overflow-auto scrollbar-none">
+                <div className="min-h-0 flex-1 px-5">
+                  {data
+                    .filter((e) => e.type === "offer")
+                    .map((item, i) => (
+                      <ItemOfferCart
+                        key={`${item.id}-${item.type}-${i}`}
+                        data={item}
+                      />
+                    ))}
+                  {data
+                    .filter((e) => e.type === "product")
+                    .map((item, i) => (
+                      <ItemProductCart
+                        key={`${item.id}-${item.type}-${i}`}
+                        data={item}
+                      />
+                    ))}
+                </div>
+              </div>
 
-                    <span className="text-lg font-bold text-amber-700">
-                      {totalPrice} <small className="font-mono">جنية</small>
-                    </span>
-                  </div>
-                  <p className="text-xs text-amber-700/60">
-                    يصحبيييي مصاريف الشحن هنحددها لما نعرف المكان
-                  </p>
-                  <button
-                    onClick={handleOrder}
-                    type="button"
-                    className="
+              {data.length > 0 ? (
+                <>
+                  <div className="my-3 border-t border-amber-200" />
+                  <div className="px-5 py-4">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-amber-900">
+                        المبلغ الإجمالي
+                      </span>
+
+                      <span className="text-lg font-bold text-amber-700">
+                        {NumberAr(totalPrice)}{" "}
+                        <small className="font-mono">ج.م</small>
+                      </span>
+                    </div>
+                    <p className="text-xs text-amber-700/60">
+                      مصاريف الشحن هنحددها لما نعرف المكان
+                    </p>
+                    <button
+                      onClick={() => setOrder(true)}
+                      type="button"
+                      className="
                   mt-4
                   flex w-full
                   items-center justify-center gap-2
@@ -231,23 +246,92 @@ ${product
                   hover:bg-green-600
                   active:scale-[0.98]
                 "
-                  >
-                    <MessageCircle size={19} />
-
-                    <span>اطلب وتابع ع الواتس</span>
-                  </button>
+                    >
+                      <span>اطلب الان</span>
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <div className="px-5 py-4">
+                  <p className="text-sm md:text-lg text-amber-700/60">
+                    العربية فاضية يصحبي هتشوف اية بس روح اتسوق وتعالي
+                  </p>
                 </div>
-              </>
-            ) : (
-              <div className="px-5 py-4">
-                <p className="text-sm md:text-lg text-amber-700/60">
-                  العربية فاضية يصحبي هتشوف اية بس روح اتسوق وتعالي
-                </p>
-              </div>
-            )}
-          </motion.div>
-        </div>
-      )}
-    </AnimatePresence>
+              )}
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+      <Modal
+        open={order && open}
+        // closable={false}
+        onCancel={() => setOrder(false)}
+        footer={false}
+        title={"بيانات التواصل"}
+      >
+        <Form
+          onFinish={(val) => {
+            handleOrder(val);
+          }}
+          layout="vertical"
+          initialValues={{ name: "", address: "", note: "" }}
+        >
+          <Form.Item
+            label={"اسمك"}
+            name={"name"}
+            rules={[
+              {
+                required: true,
+                message: "اسمك مطلوب",
+              },
+            ]}
+          >
+            <Input placeholder="اكتب اسمك هنا" id="name" />
+          </Form.Item>
+          <Form.Item
+            label={"عنوانك"}
+            name={"address"}
+            rules={[
+              {
+                required: true,
+                message: "العنوان مطلوب",
+              },
+            ]}
+          >
+            <Input placeholder="اكتب العنوان بالتفصيل هنا" id="address" />
+          </Form.Item>
+          <Form.Item
+            label={
+              <span>
+                ملاحظة <span className="text-gray-400 text-xs">(اختياري)</span>
+              </span>
+            }
+            name={"note"}
+          >
+            <TextArea placeholder="لو فيه اي ملاحظة مع الطلب" id="note" />
+          </Form.Item>
+          <button
+            type="submit"
+            className="
+                  mt-4
+                  flex w-full
+                  items-center justify-center gap-2
+                  rounded-xl
+                  bg-green-500
+                  px-4 py-3
+                  font-semibold
+                  text-white
+                  transition
+                  hover:bg-green-600
+                  active:scale-[0.98]
+                "
+          >
+            <MessageCircle size={19} />
+
+            <span>اطلب وتابع ع الواتس</span>
+          </button>
+        </Form>
+      </Modal>
+    </>
   );
 }

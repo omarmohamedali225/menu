@@ -21,6 +21,7 @@ export type Database = {
           is_available: boolean
           name: string | null
           slug: string | null
+          tenant_id: string
         }
         Insert: {
           created_at?: string
@@ -28,6 +29,7 @@ export type Database = {
           is_available?: boolean
           name?: string | null
           slug?: string | null
+          tenant_id?: string
         }
         Update: {
           created_at?: string
@@ -35,6 +37,7 @@ export type Database = {
           is_available?: boolean
           name?: string | null
           slug?: string | null
+          tenant_id?: string
         }
         Relationships: []
       }
@@ -45,6 +48,7 @@ export type Database = {
           is_available: boolean
           name: string
           price: number
+          tenant_id: string
         }
         Insert: {
           created_at?: string
@@ -52,6 +56,7 @@ export type Database = {
           is_available?: boolean
           name: string
           price?: number
+          tenant_id?: string
         }
         Update: {
           created_at?: string
@@ -59,6 +64,7 @@ export type Database = {
           is_available?: boolean
           name?: string
           price?: number
+          tenant_id?: string
         }
         Relationships: []
       }
@@ -69,6 +75,7 @@ export type Database = {
           id: number
           is_available: boolean
           price: string | null
+          tenant_id: string
           title: string | null
         }
         Insert: {
@@ -77,6 +84,7 @@ export type Database = {
           id?: number
           is_available?: boolean
           price?: string | null
+          tenant_id?: string
           title?: string | null
         }
         Update: {
@@ -85,6 +93,7 @@ export type Database = {
           id?: number
           is_available?: boolean
           price?: string | null
+          tenant_id?: string
           title?: string | null
         }
         Relationships: []
@@ -93,14 +102,17 @@ export type Database = {
         Row: {
           extra_id: number
           product_id: number
+          tenant_id: string
         }
         Insert: {
           extra_id: number
           product_id: number
+          tenant_id?: string
         }
         Update: {
           extra_id?: number
           product_id?: number
+          tenant_id?: string
         }
         Relationships: [
           {
@@ -127,6 +139,7 @@ export type Database = {
           is_available: boolean | null
           name: string | null
           price: string | null
+          tenant_id: string
         }
         Insert: {
           category_id?: string | null
@@ -135,6 +148,7 @@ export type Database = {
           is_available?: boolean | null
           name?: string | null
           price?: string | null
+          tenant_id?: string
         }
         Update: {
           category_id?: string | null
@@ -143,6 +157,7 @@ export type Database = {
           is_available?: boolean | null
           name?: string | null
           price?: string | null
+          tenant_id?: string
         }
         Relationships: [
           {
@@ -153,6 +168,30 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          id: string
+          name: string | null
+          phone: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string | null
+          id: string
+          name?: string | null
+          phone?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string | null
+          id?: string
+          name?: string | null
+          phone?: string | null
+        }
+        Relationships: []
       }
     }
     Views: {

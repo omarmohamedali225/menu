@@ -2,11 +2,22 @@ import Cat from "@/components/menu/Cat";
 import Item from "./Item";
 import { useCategories, useMenu } from "@/features/menu/hooks";
 import { CountProductsInCategory } from "@/helpers/helper";
+import { useMemo } from "react";
 
 export default function SectionCatItems() {
   const { data: dataSections, isLoading } = useMenu();
   const { data: dataCategories, isLoading: loadCategories } = useCategories();
 
+  const products = useMemo(
+    () => dataSections?.filter((e) => e.is_available),
+    [dataSections],
+  );
+
+  if (products?.length === 0) {
+    return (
+      <p className="text-[11px] text-center mt-3">المتجر خالي من المنتجات</p>
+    );
+  }
   if (loadCategories) {
     return (
       <section className="grid grid-cols-2 sm:grid-cols-3 gap-4">
@@ -17,11 +28,7 @@ export default function SectionCatItems() {
     );
   }
 
-  if (dataCategories?.length === 0) {
-    return (
-      <p className="text-[11px] text-center mt-3">المتجر خالي من المنتجات</p>
-    );
-  }
+  
 
   return dataCategories
     ?.filter((c) => c.is_available)

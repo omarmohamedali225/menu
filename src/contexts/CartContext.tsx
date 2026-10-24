@@ -1,3 +1,4 @@
+import useBack from "@/hooks/useBack";
 import { createContext, useContext, useState } from "react";
 
 type Context = {
@@ -14,9 +15,13 @@ export default function CartContext({
   children: React.ReactNode;
 }) {
   const [open, setOpen] = useState(false);
+  const { addEventModal } = useBack(!!open, () =>
+      setOpen(false),
+    );
 
   const handlerOpen = () => {
     setOpen(true);
+    addEventModal()
   };
   const handlerClose = () => {
     setOpen(false);

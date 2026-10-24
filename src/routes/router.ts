@@ -1,5 +1,9 @@
-import DashboardLayout from "@/layouts/DashLayout";
-import RootLayout from "@/layouts/RootLayout";
+import AuthGuards from "@/guards/AuthGuards";
+import GuestGuards from "@/guards/GuestGuards";
+import DashboardLayout from "@/components/dashboard/layouts/DashLayout";
+import RootLayout from "@/components/menu/layouts/RootLayout";
+import Login from "@/pages/auth/Login";
+import Register from "@/pages/auth/Register";
 import Categories from "@/pages/Categories";
 import Dashboard from "@/pages/Dashboard";
 import Extras from "@/pages/Extras";
@@ -11,18 +15,36 @@ import { createBrowserRouter } from "react-router";
 export const router = createBrowserRouter([
   {
     Component: RootLayout,
-    path: "/",
+    path: "/:tenantId",
     children: [{ index: true, Component: Menu }],
   },
   {
-    Component: DashboardLayout,
-    path: "/dashboard",
+    Component: AuthGuards,
     children: [
-      { index: true, Component: Dashboard },
-      { path: "products", Component: Products },
-      { path: "categories", Component: Categories },
-      { path: "extras", Component: Extras },
-      { path: "offers", Component: Offers },
+      {
+        Component: DashboardLayout,
+        path: "/dashboard",
+        children: [
+          { index: true, Component: Dashboard },
+          { path: "products", Component: Products },
+          { path: "categories", Component: Categories },
+          { path: "extras", Component: Extras },
+          { path: "offers", Component: Offers },
+        ],
+      },
+    ],
+  },
+  {
+    Component: GuestGuards,
+    children: [
+      {
+        path: "/register",
+        Component: Register,
+      },
+      {
+        path: "/login",
+        Component: Login,
+      },
     ],
   },
   {

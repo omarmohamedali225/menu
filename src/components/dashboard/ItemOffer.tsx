@@ -3,7 +3,7 @@ import { useState } from "react";
 import AvailableSwitch from "./AvailableSwitch";
 import { Ellipsis } from "lucide-react";
 import type { OffersTypeApi } from "@/features/menu/api";
-import { useRemoveOffer } from "@/features/menu/hooks";
+import { useRemoveOffer } from "@/features/dashboard/hooks";
 
 export default function ItemOffer({ data }: { data: OffersTypeApi }) {
   const [item, setItem] = useState<OffersTypeApi | null>(null);

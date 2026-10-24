@@ -1,6 +1,7 @@
 import { useCartStorage } from "@/hooks/useCartStorage";
 import type { ProductRowCart } from "@/types/Products";
 import Button from "../Button";
+import { NumberAr } from "@/helpers/helper";
 
 export function ItemProductCart({ data }: { data: ProductRowCart }) {
   const { addItem, deleteItem } = useCartStorage();
@@ -22,29 +23,39 @@ export function ItemProductCart({ data }: { data: ProductRowCart }) {
         </p>
 
         <span className="mt-1 block text-sm font-bold text-amber-700">
-          {data?.price} <small className="font-mono">جنية</small>
+          {NumberAr(data?.item?.price)} <small className="font-mono">ج.م</small>
         </span>
       </div>
 
       {/* Quantity */}
-      <div className="flex shrink-0 items-center gap-2 rounded-full border border-amber-300 bg-white px-1.5 py-1">
-        <Button
-          text="-"
+      <div className="flex flex-row-reverse items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2 rounded-full border border-amber-300 bg-white px-1.5 py-1">
+          <Button
+            text="-"
+            onClick={() => {
+              deleteItem({ ...data, quantity: 1 });
+            }}
+          />
+
+          <span className="min-w-5 text-center text-sm font-bold text-amber-900">
+            {NumberAr(data.quantity)}
+          </span>
+
+          <Button
+            text="+"
+            onClick={() => {
+              addItem({ ...data, quantity: 1 });
+            }}
+          />
+        </div>
+        <p
+          className="text-mute text-[10px] cursor-pointer"
           onClick={() => {
             deleteItem(data);
           }}
-        />
-
-        <span className="min-w-5 text-center text-sm font-bold text-amber-900">
-          {data.quantity}
-        </span>
-
-        <Button
-          text="+"
-          onClick={() => {
-            addItem(data);
-          }}
-        />
+        >
+          مسح
+        </p>
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 import AddExtra from "@/components/dashboard/AddExtra";
 import ItemExtra from "@/components/dashboard/ItemExtra";
-import { useExtras } from "@/features/menu/hooks";
+import { useExtras } from "@/features/dashboard/hooks";
 
 export default function Extras() {
   const { data, isLoading, isError } = useExtras();

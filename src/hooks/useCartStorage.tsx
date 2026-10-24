@@ -1,6 +1,8 @@
 import type { CartType } from "@/types/Products";
 import { message } from "antd";
 import React, { createContext, useContext, useEffect, useState } from "react";
+import useTenantIdwithParams from "./useTenantIdwithParams";
+// import { useExistTenant } from "@/features/menu/hooks";
 
 interface Type {
   data: CartType[];
@@ -10,9 +12,11 @@ interface Type {
 
 const ContextStorage = createContext<Type | null>(null);
 
-function loadCart(): CartType[] {
+const cartKey = (tenantId: string) => `cart:${tenantId}`;
+
+function loadCart(tenantId: string): CartType[] {
   try {
-    const raw = localStorage.getItem("data");
+    const raw = localStorage.getItem(cartKey(tenantId));
     return raw ? JSON.parse(raw) : [];
   } catch {
     return [];
@@ -24,15 +28,18 @@ export default function StorageCartContext({
 }: {
   children: React.ReactNode;
 }) {
-  const [data, setData] = useState<CartType[]>(loadCart);
+  const tenantId = useTenantIdwithParams();
+  const [data, setData] = useState<CartType[]>(() => loadCart(tenantId!));
+  // const { data: isExsitTenant } = useExistTenant();
+  // console.log(isExsitTenant);
 
   useEffect(() => {
     try {
-      localStorage.setItem("data", JSON.stringify(data));
+      localStorage.setItem(cartKey(tenantId!), JSON.stringify(data));
     } catch {
       //
     }
-  }, [data]);
+  }, [data, tenantId]);
 
   function addItem(item: CartType) {
     setData((prev) => {
@@ -67,10 +74,11 @@ export default function StorageCartContext({
       }
 
       return prev.map((p, i) =>
-        i === index ? { ...p, quantity: p.quantity + 1 } : p,
+        i === index ? { ...p, quantity: p.quantity + item.quantity } : p,
       );
     });
-    localStorage.setItem("data", JSON.stringify(data));
+    const key = cartKey(tenantId!);
+    localStorage.setItem(key, JSON.stringify(data));
     message.success("تم تحديث العربة");
   }
   function deleteItem(item: CartType) {
@@ -93,10 +101,13 @@ export default function StorageCartContext({
       }
 
       return prev
-        .map((p, i) => (i === index ? { ...p, quantity: p.quantity - 1 } : p))
+        .map((p, i) =>
+          i === index ? { ...p, quantity: p.quantity - item.quantity } : p,
+        )
         .filter((e) => e.quantity > 0);
     });
-    localStorage.setItem("data", JSON.stringify(data));
+    const key = cartKey(tenantId!);
+    localStorage.setItem(key, JSON.stringify(data));
     message.success("تم تحديث العربة");
   }
 

@@ -9,3 +9,8 @@ export function CountProductsInCategory(
   c.set(id, find?.length);
   return c;
 }
+
+export function NumberAr(n: number | string | null | undefined) {
+  if (n === 0 || n === null || n === undefined) return "";
+  return Number(n).toLocaleString("ar-eg");
+}

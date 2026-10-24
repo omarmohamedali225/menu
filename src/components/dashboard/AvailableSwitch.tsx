@@ -1,4 +1,4 @@
-import { useAvailable } from "@/features/menu/hooks";
+import { useAvailable } from "@/features/dashboard/hooks";
 import { Switch } from "antd";
 type keys = "offers" | "extras" | "products" | "categories";
 

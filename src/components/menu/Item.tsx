@@ -7,6 +7,7 @@ import type { ProductWithCategories } from "@/features/menu/api";
 import useBack from "@/hooks/useBack";
 import { message } from "antd";
 import { useCartStorage } from "@/hooks/useCartStorage";
+import { NumberAr } from "@/helpers/helper";
 // import type { CartType } from "@/types/Products";
 
 export default function Item({ product }: { product: ProductWithCategories }) {
@@ -41,7 +42,7 @@ export default function Item({ product }: { product: ProductWithCategories }) {
         className="bg-white flex flex-col sm:flex-row p-2 rounded-2xl select-none group border border-amber-100 shadow"
       >
         {/* <div className="relative w-full h-28 sm:w-26 md:h-26 shrink-0 overflow-hidden"> */}
-          {/* <img
+        {/* <img
             src={
               "https://placehold.co/600x600/fef3c7/b45309/webp?text=" +
               product.name
@@ -49,7 +50,7 @@ export default function Item({ product }: { product: ProductWithCategories }) {
             className="w-full h-full aspect-square object-cover group-hover:scale-105 transition-transform"
             alt={""}
           /> */}
-          {/* <div className="w-full h-full border"></div>
+        {/* <div className="w-full h-full border"></div>
           {!product.is_available && (
             <span className="absolute flex-1 top-2 left-2 bg-red-200 text-red-950 px-2 py-1 text-[10px] rounded">
               مش متوفر
@@ -68,10 +69,10 @@ export default function Item({ product }: { product: ProductWithCategories }) {
               غير متوفر حاليا
             </span>
           )}
-          <div>
+          <div className="mt-auto">
             <h2 className="text-lg text-amber-700 font-extrabold">
-              {product.price}{" "}
-              <small className="font-normal text-xs">جنية</small>
+              {NumberAr(product.price)}{" "}
+              <small className="font-normal text-xs">ج.م</small>
             </h2>
 
             {product.extras.length > 0 ? (
@@ -101,53 +102,12 @@ export default function Item({ product }: { product: ProductWithCategories }) {
                     extra: [],
                   });
                 }}
-                className="float-end border-primary border-2 text-[12px] px-1 py-0.5 rounded-lg text-primary cursor-pointer hover:bg-primary hover:text-white transition-colors duration-150"
+                className="float-end  border-primary border-2 text-[12px] px-1 py-0.5 rounded-lg text-primary cursor-pointer hover:bg-primary hover:text-white transition-colors duration-150"
               >
                 {exist?.quantity ? "متضاف" : "اضف"} للعربة{" "}
-                <small>{exist?.quantity}</small>
+                <small>{NumberAr(exist?.quantity)}</small>
               </button>
             )}
-
-            {/* {!exist ? (
-              <button
-                className="rounded-full text-3xl cursor-pointer hover:bg-[#7a2f00d0] transition-colors bg-[#7A2E00] text-[#FBEACB] w-11 h-11 shadow shrink-0"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleAdd(product);
-                }}
-              >
-                +
-              </button>
-            ) : (
-              <div
-                onClick={(e) => e.stopPropagation()}
-                className="justify-center flex shrink-0 items-center gap-2 rounded-lg border-amber-800"
-              >
-                <button
-                  className="rounded-full text-xl cursor-pointer hover:bg-[#7a2f00d0] transition-colors bg-[#7A2E00] text-[#FBEACB] w-11 h-11 shadow shrink-0"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    deleteItem(exist);
-                  }}
-                >
-                  -
-                </button>
-
-                <span className="min-w-5 text-center text-sm font-bold text-amber-900">
-                  {exist.quantity}
-                </span>
-
-                <button
-                  className="rounded-full text-xl cursor-pointer hover:bg-[#7a2f00d0] transition-colors bg-[#7A2E00] text-[#FBEACB] w-11 h-11 shadow shrink-0"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    addItem(exist);
-                  }}
-                >
-                  +
-                </button>
-              </div>
-            )} */}
           </div>
         </div>
       </motion.div>

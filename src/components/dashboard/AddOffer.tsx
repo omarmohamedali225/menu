@@ -1,4 +1,4 @@
-import { useAddOffer } from "@/features/menu/hooks";
+import { useAddOffer } from "@/features/dashboard/hooks";
 import { Form, Input, Modal } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import { useState } from "react";

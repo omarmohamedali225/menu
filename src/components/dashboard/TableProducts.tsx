@@ -8,7 +8,7 @@ import {
   useExtras,
   useMenu,
   useRemoveProduct,
-} from "@/features/menu/hooks";
+} from "@/features/dashboard/hooks";
 import {
   Dropdown,
   Form,

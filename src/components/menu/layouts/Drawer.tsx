@@ -1,5 +1,5 @@
 import { BadgePercent, Home, Layers, Package, PlusCircle } from "lucide-react";
-import { ListItem } from "../dashboard/ListItem";
+import { ListItem } from "../../dashboard/ListItem";
 import { useDrawer } from "@/contexts/OpenDrawer";
 import { motion } from "motion/react";
 import { Grid } from "antd";

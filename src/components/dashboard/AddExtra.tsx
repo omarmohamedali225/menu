@@ -1,4 +1,4 @@
-import { useAddExtra } from "@/features/menu/hooks";
+import { useAddExtra } from "@/features/dashboard/hooks";
 import { Form, Input, Modal } from "antd";
 import { useState } from "react";
 
