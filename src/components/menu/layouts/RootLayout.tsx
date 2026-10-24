@@ -7,7 +7,7 @@ import { useExistTenant } from "@/features/menu/hooks";
 
 export default function RootLayout() {
   const { data, isError, isLoading } = useExistTenant();
-
+  
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center gap-1 justify-center px-4">
@@ -24,6 +24,9 @@ export default function RootLayout() {
       </div>
     );
   }
+
+
+
   return (
     <CartContext>
       <StorageCartContext>
