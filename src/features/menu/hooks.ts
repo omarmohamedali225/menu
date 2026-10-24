@@ -1,5 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchCategories, fetchExtras, fetchMenu, fetchOffers, fetchProfile, fetchTenantExists } from "./api";
+import {
+  fetchCategories,
+  fetchExtras,
+  fetchMenu,
+  fetchOffers,
+  fetchProfile,
+  fetchTenantExists,
+} from "./api";
 import useTenantIdwithParams from "@/hooks/useTenantIdwithParams";
 
 export function useMenu() {
@@ -51,6 +58,7 @@ export function useExistTenant() {
     queryFn: () => fetchTenantExists(tenantId!),
     staleTime: 60 * 60 * 1000,
     enabled: !!tenantId,
+    retry: false,
   });
 }
 

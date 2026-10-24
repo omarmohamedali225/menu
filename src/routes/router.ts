@@ -11,6 +11,7 @@ import Menu from "@/pages/Menu";
 import Offers from "@/pages/Offers";
 import Products from "@/pages/Products";
 import { createBrowserRouter } from "react-router";
+import NotFound from "@/pages/NotFound";
 
 export const router = createBrowserRouter([
   {
@@ -49,6 +50,6 @@ export const router = createBrowserRouter([
   },
   {
     path: "*",
-    element: "not found 404",
+    Component: NotFound,
   },
 ]);
