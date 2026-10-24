@@ -22,13 +22,11 @@ export default function AddProduct() {
         open={open}
         onCancel={() => {
           setOpen(false);
-          form.resetFields();
         }}
         footer={false}
         closable={false}
         title={"أضافة منتج"}
       >
-        <p>الخاصية دي لا تعمل حاليا</p>
         <Form
           form={form}
           initialValues={{ name: null, price: null, category: null }}
@@ -39,7 +37,12 @@ export default function AddProduct() {
                 price: val.price,
                 category_id: val.category,
               },
-              { onSuccess: () => setOpen(false) },
+              {
+                onSuccess: () => {
+                  form.resetFields();
+                  setOpen(false);
+                },
+              },
             );
           }}
           layout="vertical"
@@ -51,8 +54,8 @@ export default function AddProduct() {
             rules={[
               {
                 required: true,
-                min: 3,
-                message: "اسم المنتج مطلوب اقل حاجه 3 حروف",
+                min: 1,
+                message: "اسم المنتج مطلوب",
               },
             ]}
           >
@@ -100,7 +103,7 @@ export default function AddProduct() {
             type="submit"
             className="w-full flex justify-center gap-1 mt-2 border-primary border-2 px-2 py-1 rounded-lg text-primary cursor-pointer hover:bg-primary hover:text-white transition-colors duration-150"
           >
-            اضافة تصنيف
+            اضافة صنف
             {isPending && (
               <span className="w-6 h-6 border-2 border-l-transparent block rounded-full animate-spin"></span>
             )}

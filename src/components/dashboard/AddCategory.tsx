@@ -20,7 +20,6 @@ export default function AddCategory() {
         open={open}
         onCancel={() => {
           setOpen(false);
-          form.resetFields();
         }}
         footer={false}
         closable={false}
@@ -35,7 +34,12 @@ export default function AddCategory() {
                 name: val.name,
                 slug: val.slug,
               },
-              { onSuccess: () => setOpen(false) },
+              {
+                onSuccess: () => {
+                  form.resetFields();
+                  setOpen(false);
+                },
+              },
             );
           }}
           layout="vertical"

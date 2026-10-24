@@ -20,8 +20,7 @@ export default function AddOffer() {
         maskTransitionName=""
         open={open}
         onCancel={() => {
-          setOpen(false)
-          form.resetFields()
+          setOpen(false);
         }}
         footer={false}
         closable={false}
@@ -37,7 +36,12 @@ export default function AddOffer() {
                 description: val.description,
                 price: val.price,
               },
-              { onSuccess: () => setOpen(false) },
+              {
+                onSuccess: () => {
+                  form.resetFields();
+                  setOpen(false);
+                },
+              },
             );
           }}
           layout="vertical"

@@ -20,7 +20,6 @@ export default function AddExtra() {
         open={open}
         onCancel={() => {
           setOpen(false);
-          form.resetFields();
         }}
         footer={false}
         closable={false}
@@ -35,7 +34,12 @@ export default function AddExtra() {
                 name: val.name,
                 price: val.price,
               },
-              { onSuccess: () => setOpen(false) },
+              {
+                onSuccess: () => {
+                  form.resetFields();
+                  setOpen(false);
+                },
+              },
             );
           }}
           layout="vertical"

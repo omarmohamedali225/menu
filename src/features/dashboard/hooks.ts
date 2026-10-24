@@ -87,7 +87,7 @@ export function useUpdateProfile() {
     onError: () => message.error("حصل خطا جرب تاني"),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["profile", tenantId] });
-      message.success('المنيو جاهز الان')
+      message.success("المنيو جاهز الان");
     },
   });
 }
@@ -101,8 +101,11 @@ const tables: Record<keys, string> = {
   categories: "categories",
 };
 
+type AvailableItem = { id: string | number; is_available: boolean };
+
 export function useAvailable() {
   const qc = useQueryClient();
+  const tenantId = useTenantId();
 
   return useMutation({
     mutationFn: ({
@@ -115,17 +118,18 @@ export function useAvailable() {
       table: keys;
     }) => updateAvailable({ id, bool, table }),
     onMutate: async ({ id, bool, table }) => {
-      await qc.cancelQueries({ queryKey: [tables[table]] });
-      const prev = qc.getQueriesData({ queryKey: [tables[table]] });
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      qc.setQueriesData({ queryKey: [tables[table]] }, (old: any[]) =>
-        Array.isArray(old)
-          ? old.map((item) =>
-              String(item.id) === String(id)
-                ? { ...item, is_available: bool }
-                : item,
-            )
-          : old,
+      await qc.cancelQueries({ queryKey: [tables[table], tenantId] });
+      const prev = qc.getQueriesData({ queryKey: [tables[table], tenantId] });
+      qc.setQueriesData<AvailableItem[]>(
+        { queryKey: [tables[table], tenantId] },
+        (old) =>
+          Array.isArray(old)
+            ? old.map((item) =>
+                String(item.id) === String(id)
+                  ? { ...item, is_available: bool }
+                  : item,
+              )
+            : old,
       );
       return { prev };
     },
@@ -134,31 +138,35 @@ export function useAvailable() {
       message.success("تم التغير");
     },
     onSettled: (_d, _e, { table }) => {
-      qc.invalidateQueries({ queryKey: [tables[table]] });
+      qc.invalidateQueries({ queryKey: [tables[table], tenantId] });
     },
   });
 }
 
 export function useEditName() {
   const qc = useQueryClient();
+  const tenantId = useTenantId();
+
   return useMutation({
     mutationFn: ({ id, data }: { id: number; data: string }) =>
       updateName(id, data),
     onError: () => message.error("حصل خطأ في التحديث"),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["menu"] });
+      qc.invalidateQueries({ queryKey: ["menu", tenantId] });
       message.success("تم التغير");
     },
   });
 }
 export function useEditPrice() {
   const qc = useQueryClient();
+  const tenantId = useTenantId();
+
   return useMutation({
     mutationFn: ({ id, data }: { id: number; data: string }) =>
       updatePrice(id, data),
     onError: () => message.error("حصل خطأ في التحديث"),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["menu"] });
+      qc.invalidateQueries({ queryKey: ["menu", tenantId] });
       message.success("تم التغير");
     },
   });
@@ -171,7 +179,7 @@ export function useEditAvailable() {
   //     updateCategories(id, bool),
   //   onError: () => message.error("حصل خطأ في التحديث"),
   //   onSuccess: () => {
-  //     qc.invalidateQueries({ queryKey: ["menu"] });
+  //     qc.invalidateQueries({ queryKey: ["menu",tenantId] });
   //     message.success("تم التغير");
   //   },
   // });
@@ -186,35 +194,39 @@ type TypeEdit = {
 };
 export function useEdit() {
   const qc = useQueryClient();
+  const tenantId = useTenantId();
+
   return useMutation({
     mutationFn: (data: TypeEdit) => edit({ data: data }),
     onError: () => message.error("حصل خطا"),
     onSuccess: async () => {
-      await qc.invalidateQueries({ queryKey: ["menu"] });
+      await qc.invalidateQueries({ queryKey: ["menu", tenantId] });
       message.success("تمت بنجاح");
     },
   });
 }
 export function useAddProduct() {
   const qc = useQueryClient();
+  const tenantId = useTenantId();
 
   return useMutation({
     mutationFn: (data: TypeInsertProduct) => addProduct(data),
     onError: () => message.error("حصل خطا في الاضافة اعد المحاولة"),
     onSuccess: async () => {
-      await qc.invalidateQueries({ queryKey: ["menu"] });
+      await qc.invalidateQueries({ queryKey: ["menu", tenantId] });
       message.success("تمت الاضافة");
     },
   });
 }
 export function useRemoveProduct() {
   const qc = useQueryClient();
+  const tenantId = useTenantId();
 
   return useMutation({
     mutationFn: (id: number) => removeProduct(id),
     onError: () => message.error("حصل خطا في الحذف اعد المحاولة"),
     onSuccess: async () => {
-      await qc.invalidateQueries({ queryKey: ["menu"] });
+      await qc.invalidateQueries({ queryKey: ["menu", tenantId] });
       message.success("تم حذف المنتج بنجاح");
     },
   });
@@ -222,48 +234,52 @@ export function useRemoveProduct() {
 
 export function useAddOffer() {
   const qc = useQueryClient();
+  const tenantId = useTenantId();
 
   return useMutation({
     mutationFn: (data: TypeInsertOffer) => addOffer(data),
     onError: () => message.error("العرض مشتغلش"),
     onSuccess: async () => {
-      await qc.invalidateQueries({ queryKey: ["offers"] });
+      await qc.invalidateQueries({ queryKey: ["offers", tenantId] });
       message.success("تمت اضافة العرض بنجاح");
     },
   });
 }
 export function useRemoveOffer() {
   const qc = useQueryClient();
+  const tenantId = useTenantId();
 
   return useMutation({
     mutationFn: (id: number) => removeOffer(id),
     onError: () => message.error("العرض متمسحش"),
     onSuccess: async () => {
-      await qc.invalidateQueries({ queryKey: ["offers"] });
+      await qc.invalidateQueries({ queryKey: ["offers", tenantId] });
       message.success("تمت مسح العرض بنجاح");
     },
   });
 }
 export function useAddExtra() {
   const qc = useQueryClient();
+  const tenantId = useTenantId();
 
   return useMutation({
     mutationFn: (data: TypeInsertExtra) => addExtra(data),
     onError: () => message.error("حصل خطا في الاضافة اعد المحاولة"),
     onSuccess: async () => {
-      await qc.invalidateQueries({ queryKey: ["extras"] });
+      await qc.invalidateQueries({ queryKey: ["extras", tenantId] });
       message.success("تمت الاضافة");
     },
   });
 }
 export function useRemoveExtra() {
   const qc = useQueryClient();
+  const tenantId = useTenantId();
 
   return useMutation({
     mutationFn: (id: number) => removeExtra(id),
     onError: () => message.error("العرض متمسحش"),
     onSuccess: async () => {
-      await qc.invalidateQueries({ queryKey: ["extras"] });
+      await qc.invalidateQueries({ queryKey: ["extras", tenantId] });
       message.success("تمت مسح العرض بنجاح");
     },
   });
@@ -273,12 +289,14 @@ export function useRemoveExtra() {
 
 export function useEditCategories() {
   const qc = useQueryClient();
+  const tenantId = useTenantId();
+
   return useMutation({
     mutationFn: ({ id, data }: { id: number; data: string }) =>
       updateCategories(id, data),
     onError: () => message.error("حصل خطأ في التحديث"),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["menu"] });
+      qc.invalidateQueries({ queryKey: ["menu", tenantId] });
       message.success("تم التغير");
     },
   });
@@ -290,24 +308,26 @@ export function useEditCategories() {
 // };
 export function useAddCategory() {
   const qc = useQueryClient();
+  const tenantId = useTenantId();
 
   return useMutation({
     mutationFn: (data: TypeInsertCategory) => addCategory(data),
     onError: () => message.error("التصنيف مشتغلش"),
     onSuccess: async () => {
-      await qc.invalidateQueries({ queryKey: ["menu"] });
+      await qc.invalidateQueries({ queryKey: ["categories", tenantId] });
       message.success("تمت اضافة التصنيف بنجاح");
     },
   });
 }
 export function useRemoveCategory() {
   const qc = useQueryClient();
+  const tenantId = useTenantId();
 
   return useMutation({
     mutationFn: (id: string) => removeCategory(id),
     onError: () => message.error("التصنيف متمسحش"),
     onSuccess: async () => {
-      await qc.invalidateQueries({ queryKey: ["menu"] });
+      await qc.invalidateQueries({ queryKey: ["categories", tenantId] });
       message.success("تمت مسح التصنيف بنجاح");
     },
   });
