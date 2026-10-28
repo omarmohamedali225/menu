@@ -11,7 +11,9 @@ export default function AvailableSwitch({
   value: boolean;
   table: keys;
 }) {
-  const { mutate, isPending } = useAvailable();
+  const { mutate, isPending } = useAvailable(
+    table === "categories" ? "products" : undefined,
+  );
   return (
     <Switch
       checkedChildren={"نشط"}

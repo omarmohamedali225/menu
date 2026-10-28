@@ -1,3 +1,4 @@
+import { sendTelegram } from "@/helpers/telegram";
 import { supabase } from "@/lib/supabase";
 import { Form, Input } from "antd";
 import { useState } from "react";
@@ -32,6 +33,16 @@ export default function Register() {
       throw error;
     }
     setSuccess(true);
+
+    const time = new Date().toLocaleString("ar-EG", {
+      timeZone: "Africa/Cairo",
+      dateStyle: "short",
+      timeStyle: "short",
+    });
+
+    sendTelegram(`🍽 منيو جديد اتعمل في السيستم
+الوقت: ${time}
+الحالة: غير مفعّل ⛔`);
   }
 
   return (
@@ -71,7 +82,7 @@ export default function Register() {
               disabled={loading}
               className="bg-[#AB081D] text-white bg-linear-to-r px-2 py-1 rounded outline-0 hover:bg-red-500 flex items-center gap-1 transition-colors m-w-20"
             >
-              تسجيل
+              تسجيل مستخدم جديد
               {loading && (
                 <span className="w-4 h-4 border-2 border-l-transparent block rounded-full animate-spin"></span>
               )}
@@ -79,7 +90,7 @@ export default function Register() {
           </Form>
         )}
         <p className="text-center text-[11px]">
-          هل لديك منيو؟ <Link to={"/login"}>سجل الان </Link>
+          <Link to={"/"}>هل لديك منيو؟ سجل الان </Link>
         </p>
         {success && (
           <p className="text-center text-[11px]">

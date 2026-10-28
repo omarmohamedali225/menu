@@ -1,4 +1,4 @@
-import { Drawer } from "@/components/menu/layouts/Drawer";
+import { Drawer } from "@/components/dashboard/layouts/Drawer";
 import DrawerContext, { useDrawer } from "@/contexts/OpenDrawer";
 import { useProfile } from "@/features/dashboard/hooks";
 import { Avatar, Dropdown, Flex } from "antd";

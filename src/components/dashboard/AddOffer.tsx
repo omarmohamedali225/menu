@@ -86,7 +86,7 @@ export default function AddOffer() {
               },
             ]}
           >
-            <Input placeholder="10 جنية مثلا" />
+            <Input type={'number'} placeholder="10 جنية مثلا" />
           </Form.Item>
 
           <button

@@ -52,7 +52,7 @@ export default function ItemCategory({ data }: { data: TypeCategories }) {
                     />
                   ),
                 },
-                { key: 3, label: "" },
+                { key: 3, label: "تعديل" },
                 { key: 4, label: "" },
                 { key: 2, label: "حذف", danger: true },
               ],
@@ -82,7 +82,7 @@ export default function ItemCategory({ data }: { data: TypeCategories }) {
       {item && (
         <Modal
           open={Boolean(item)}
-          title={"حذف عرض"}
+          title={"حذف تصنيف"}
           okText={"ايوه امسح"}
           cancelText={"تراجع"}
           onCancel={() => setItem(null)}

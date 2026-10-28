@@ -13,7 +13,7 @@ const products = (tenantId: string) =>
     .from("products")
     .select("*,categories(*),extras(*)")
     .eq("tenant_id", tenantId)
-    .order("created_at", { ascending: true });
+    .order("id", { ascending: true });
 
 const categories = (tenantId: string) =>
   supabase

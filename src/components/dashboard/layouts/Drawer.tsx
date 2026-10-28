@@ -1,8 +1,9 @@
 import { BadgePercent, Home, Layers, Package, PlusCircle } from "lucide-react";
-import { ListItem } from "../../dashboard/ListItem";
+import { ListItem } from "../ListItem";
 import { useDrawer } from "@/contexts/OpenDrawer";
 import { motion } from "motion/react";
 import { Grid } from "antd";
+import { useProfile } from "@/features/dashboard/hooks";
 const pages = [
   {
     id: 1,
@@ -22,7 +23,7 @@ const pages = [
     id: 3,
     url: "/dashboard/categories",
     slug: "categories",
-    title: "الاصناف",
+    title: "التصنيفات",
     icon: <Layers />,
   },
   {
@@ -39,11 +40,19 @@ const pages = [
     title: "العروض",
     icon: <BadgePercent />,
   },
+  // {
+  //   id: 6,
+  //   url: "/dashboard/settings",
+  //   slug: "settings",
+  //   title: "الاعدادات",
+  //   icon: <Settings />,
+  // },
 ];
 
 export function Drawer() {
   const { open, handlerClose } = useDrawer();
   const screens = Grid.useBreakpoint();
+  const { data: profile, isLoading: loadProfile } = useProfile();
 
   // useEffect(() => {
   //   if (screens.md) {
@@ -74,7 +83,7 @@ export function Drawer() {
             بركة
           </span> */}
           <div className="min-w-0">
-            <h1>البركة</h1>
+            <h1>{loadProfile ? "loading..." : profile?.name}</h1>
             <p className="text-xs">إدارة المنيو الخاص بك</p>
           </div>
         </div>

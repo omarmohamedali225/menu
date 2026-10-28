@@ -39,7 +39,7 @@ export default function Login() {
               { required: true, message: "الايميل مطلوب" },
               { type: "email", message: "الايميل غير صالح" },
             ]}
-            label={"ايميل"}
+            label={"البريد الالكتروني"}
             className="[&_label]:text-white!"
           >
             <Input placeholder="omar@gmail.com" />
@@ -59,14 +59,16 @@ export default function Login() {
             disabled={loading}
             className="bg-[#AB081D] text-white bg-linear-to-r px-2 py-1 rounded outline-0 hover:bg-red-500 flex items-center gap-1 transition-colors m-w-20"
           >
-            دخول
+            تسجيل دخول
             {loading && (
               <span className="w-4 h-4 border-2 border-l-transparent block rounded-full animate-spin"></span>
             )}
           </button>
         </Form>
         <p className="text-center text-[11px]">
-          ليس لديك منيو؟ <Link to={"/register"}>سجل الان </Link>
+          <Link to={"/register"}>
+          ليس لديك منيو؟ 
+          سجل الان </Link>
         </p>
         {success && (
           <p className="text-center text-[11px]">

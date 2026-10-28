@@ -95,7 +95,7 @@ export default function AddProduct() {
               },
             ]}
           >
-            <Input id="price" placeholder="10 او 40 مثلا" />
+            <Input id="price" type={'number'} placeholder="10 او 40 مثلا" />
           </Form.Item>
 
           <button

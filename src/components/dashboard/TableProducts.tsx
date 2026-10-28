@@ -19,7 +19,7 @@ import {
   type TableColumnsType,
 } from "antd";
 import { Ellipsis } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type Type = {
   id: number;
@@ -67,28 +67,32 @@ export default function TableProducts() {
     return editing?.id === id && editing.field === field;
   }
 
-  const data =
-    menu
-      ?.map((m) => ({
-        id: m.id ?? 0,
-        name: m.name ?? "-",
-        category: {
-          id: m?.categories?.id ?? "",
-          name: m?.categories?.name ?? "",
-        },
-        categoryId: m.category_id ?? "-",
-        price: m.price ?? "-",
-        countExtra: m.extras.length ?? 0,
-        extra: m.extras.map((e) => ({ id: e.id, name: e.name })) ?? {
-          id: 0,
-          name: "-",
-        },
-        is_available: m.is_available ?? false,
-      }))
-      .filter((e) => {
-        const n = e.name.includes(search);
-        return n;
-      }) ?? [];
+  const data = useMemo(() => {
+    return (
+      menu
+        ?.map((m) => ({
+          id: m.id ?? 0,
+          name: m.name ?? "-",
+          category: {
+            id: m?.categories?.id ?? "",
+            name: m?.categories?.name ?? "",
+            isAvailable: m?.categories?.is_available ?? false,
+          },
+          categoryId: m.category_id ?? "-",
+          price: m.price ?? "-",
+          countExtra: m.extras.length ?? 0,
+          extra: m.extras.map((e) => ({ id: e.id, name: e.name })) ?? {
+            id: 0,
+            name: "-",
+          },
+          is_available: m.is_available ?? false,
+        }))
+        .filter((e) => {
+          const n = e.name.includes(search);
+          return n;
+        }) ?? []
+    );
+  }, [menu, search]);
 
   type P = NonNullable<typeof data>[number];
 
@@ -116,7 +120,7 @@ export default function TableProducts() {
             onDoubleClick={() => {
               setEditing({ id: p.id, field: "name" });
             }}
-            className="select-none"
+            className="select-none block"
           >
             {p.name}
           </span>
@@ -126,7 +130,12 @@ export default function TableProducts() {
       title: "التصنيف",
       dataIndex: "category",
       key: "category",
-      width: 100,
+      width: 150,
+      onCell: (r) => ({
+        style: !r.category.isAvailable
+          ? { background: "#cb2222", color: "wheat" }
+          : undefined,
+      }),
       filters: (categories ?? []).map((e) => ({
         text: e.name as string,
         value: e.name as string,
@@ -226,6 +235,7 @@ export default function TableProducts() {
         isEditing(p.id, "price") ? (
           <Input
             defaultValue={p.price}
+            type={"number"}
             autoFocus
             onBlur={() => setEditing(null)}
             onPressEnter={(e) => {

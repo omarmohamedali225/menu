@@ -5,6 +5,7 @@ type TypeCartHeader = {
   data: {
     title: string;
     count: number;
+    countAvailable: number;
     url: string;
     icon: React.ReactElement;
     loading: boolean;
@@ -21,7 +22,10 @@ function CartHeader({ data }: TypeCartHeader) {
             {data.loading ? (
               <span className="w-6 h-6 border-2 border-l-transparent block rounded-full animate-spin"></span>
             ) : (
-              data.count
+              <>
+                {data.countAvailable}
+                <span className="text-[10px]">من اصل {data.count} منتج</span>
+              </>
             )}
           </h2>
         </div>

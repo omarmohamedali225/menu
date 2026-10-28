@@ -101,6 +101,7 @@ export default function Cart() {
       )
       .join("\n\n");
 
+
     const customerInfo =
       `*الاسم:* ${name}\n` +
       `*العنوان:* ${address}` +

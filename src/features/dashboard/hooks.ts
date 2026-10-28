@@ -28,11 +28,12 @@ import type {
   TypeInsertProduct,
 } from "@/types/Products";
 import useTenantId from "@/hooks/useTenantId";
+import { sendTelegram } from "@/helpers/telegram";
 
 export function useMenu() {
   const tenantId = useTenantId();
   return useQuery({
-    queryKey: ["menu", tenantId],
+    queryKey: ["products", tenantId],
     queryFn: () => fetchMenu(tenantId),
     staleTime: 60 * 60 * 1000, //cache 1 hour
     enabled: !!tenantId,
@@ -85,9 +86,22 @@ export function useUpdateProfile() {
     mutationFn: ({ name, phone }: { name: string; phone: string }) =>
       updateProfile(tenantId, name, phone),
     onError: () => message.error("حصل خطا جرب تاني"),
-    onSuccess: () => {
+    onSuccess: (_, { name,phone }) => {
       qc.invalidateQueries({ queryKey: ["profile", tenantId] });
       message.success("المنيو جاهز الان");
+
+      const time = new Date().toLocaleString("ar-EG", {
+        timeZone: "Africa/Cairo",
+        dateStyle: "short",
+        timeStyle: "short",
+      });
+
+      sendTelegram(
+        `🍽 <b>سيستم اتفعل</b>\n` +
+          `الاسم: ${name}\n` +
+          `رقم الهاتف: ${phone}\n` +
+          `وقت التفعيل: ${time}`,
+      );
     },
   });
 }
@@ -97,13 +111,13 @@ type keys = "offers" | "extras" | "products" | "categories";
 const tables: Record<keys, string> = {
   extras: "extras",
   offers: "offers",
-  products: "menu",
+  products: "products",
   categories: "categories",
 };
 
 type AvailableItem = { id: string | number; is_available: boolean };
 
-export function useAvailable() {
+export function useAvailable(tableRefresh?: keys) {
   const qc = useQueryClient();
   const tenantId = useTenantId();
 
@@ -139,6 +153,9 @@ export function useAvailable() {
     },
     onSettled: (_d, _e, { table }) => {
       qc.invalidateQueries({ queryKey: [tables[table], tenantId] });
+      if (tableRefresh) {
+        qc.invalidateQueries({ queryKey: [tableRefresh, tenantId] });
+      }
     },
   });
 }
@@ -152,7 +169,7 @@ export function useEditName() {
       updateName(id, data),
     onError: () => message.error("حصل خطأ في التحديث"),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["menu", tenantId] });
+      qc.invalidateQueries({ queryKey: ["products", tenantId] });
       message.success("تم التغير");
     },
   });
@@ -166,7 +183,7 @@ export function useEditPrice() {
       updatePrice(id, data),
     onError: () => message.error("حصل خطأ في التحديث"),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["menu", tenantId] });
+      qc.invalidateQueries({ queryKey: ["products", tenantId] });
       message.success("تم التغير");
     },
   });
@@ -200,7 +217,7 @@ export function useEdit() {
     mutationFn: (data: TypeEdit) => edit({ data: data }),
     onError: () => message.error("حصل خطا"),
     onSuccess: async () => {
-      await qc.invalidateQueries({ queryKey: ["menu", tenantId] });
+      await qc.invalidateQueries({ queryKey: ["products", tenantId] });
       message.success("تمت بنجاح");
     },
   });
@@ -213,7 +230,7 @@ export function useAddProduct() {
     mutationFn: (data: TypeInsertProduct) => addProduct(data),
     onError: () => message.error("حصل خطا في الاضافة اعد المحاولة"),
     onSuccess: async () => {
-      await qc.invalidateQueries({ queryKey: ["menu", tenantId] });
+      await qc.invalidateQueries({ queryKey: ["products", tenantId] });
       message.success("تمت الاضافة");
     },
   });
@@ -226,7 +243,7 @@ export function useRemoveProduct() {
     mutationFn: (id: number) => removeProduct(id),
     onError: () => message.error("حصل خطا في الحذف اعد المحاولة"),
     onSuccess: async () => {
-      await qc.invalidateQueries({ queryKey: ["menu", tenantId] });
+      await qc.invalidateQueries({ queryKey: ["products", tenantId] });
       message.success("تم حذف المنتج بنجاح");
     },
   });
@@ -296,7 +313,7 @@ export function useEditCategories() {
       updateCategories(id, data),
     onError: () => message.error("حصل خطأ في التحديث"),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["menu", tenantId] });
+      qc.invalidateQueries({ queryKey: ["products", tenantId] });
       message.success("تم التغير");
     },
   });

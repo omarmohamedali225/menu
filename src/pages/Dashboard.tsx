@@ -29,20 +29,9 @@ export default function Dashboard() {
     return [
       {
         id: 1,
-        title: "أجمالي المنتجات",
-        count: menu?.length ?? 0,
-        url: "products",
-        icon: (
-          <div className="bg-green-500/40 w-8 h-8 mr-auto flex items-center justify-center rounded-full">
-            <Package size={18} className="text-green-900" />
-          </div>
-        ),
-        loading: productsLoad,
-      },
-      {
-        id: 2,
         title: "المنتجات النشطة",
-        count: menu?.filter((m) => m.is_available).length ?? 0,
+        count: menu?.length ?? 0,
+        countAvailable: menu?.filter((m) => m.is_available).length ?? 0,
         url: "products",
         icon: (
           <div className="bg-green-500/40 w-8 h-8 mr-auto flex items-center justify-center rounded-full">
@@ -51,22 +40,12 @@ export default function Dashboard() {
         ),
         loading: productsLoad,
       },
+
       {
         id: 3,
-        title: "أجمالي التصنيفات",
-        count: categories?.length ?? 0,
-        url: "categories",
-        icon: (
-          <div className="bg-yellow-500/40 w-8 h-8 mr-auto flex items-center justify-center rounded-full">
-            <Layers size={18} className="text-yellow-900" />
-          </div>
-        ),
-        loading: categoriesLoad,
-      },
-      {
-        id: 4,
         title: "التصنيفات النشطة",
-        count: categories?.filter((c) => c.is_available).length ?? 0,
+        count: categories?.length ?? 0,
+        countAvailable: categories?.filter((c) => c.is_available).length ?? 0,
         url: "categories",
         icon: (
           <div className="bg-yellow-500/40 w-8 h-8 mr-auto flex items-center justify-center rounded-full">
@@ -75,22 +54,12 @@ export default function Dashboard() {
         ),
         loading: categoriesLoad,
       },
+
       {
         id: 5,
         title: "العروض",
         count: offers?.length ?? 0,
-        url: "offers",
-        icon: (
-          <div className="bg-fuchsia-500/40 w-8 h-8 mr-auto flex items-center justify-center rounded-full">
-            <BadgePercent size={18} className="text-fuchsia-900 rotate-90" />
-          </div>
-        ),
-        loading: offersLoad,
-      },
-      {
-        id: 6,
-        title: "العروض النشطة",
-        count: offers?.filter((o) => o.is_available).length ?? 0,
+        countAvailable: offers?.filter((c) => c.is_available).length ?? 0,
         url: "offers",
         icon: (
           <div className="bg-fuchsia-500/40 w-8 h-8 mr-auto flex items-center justify-center rounded-full">
@@ -103,18 +72,7 @@ export default function Dashboard() {
         id: 7,
         title: "الاضافات",
         count: extras?.length ?? 0,
-        url: "extras",
-        icon: (
-          <div className="bg-blue-500/40 w-8 h-8 mr-auto flex items-center justify-center rounded-full">
-            <PlusCircle size={18} className="text-blue-900 rotate-90" />
-          </div>
-        ),
-        loading: extrasLoad,
-      },
-      {
-        id: 8,
-        title: "الاضافات النشطة",
-        count: extras?.filter((e) => e.is_available).length ?? 0,
+        countAvailable: extras?.filter((c) => c.is_available).length ?? 0,
         url: "extras",
         icon: (
           <div className="bg-blue-500/40 w-8 h-8 mr-auto flex items-center justify-center rounded-full">
@@ -135,7 +93,7 @@ export default function Dashboard() {
     extrasLoad,
   ]);
 
-  const { data: profile, isLoading: loadProfile } = useProfile();
+  const { data: profile } = useProfile();
   const { mutate: updateProfile, isPending: loadUpdateProfile } =
     useUpdateProfile();
   const [copy, setCopy] = useState(false);
@@ -194,7 +152,7 @@ export default function Dashboard() {
       <div className="flex items-center justify-between mt-4">
         <div>
           <h1 className="text-xl font-semibold text-primary">
-            اهلا بيك, {loadProfile ? "loading..." : profile?.name}
+            مرحبا بك
           </h1>
           <h2 className="text-xs mt-1 text-mute">
             دي نظره سريعه علي نشاط متجرك واداره المنيو الخاص بيك 🤗.
@@ -211,7 +169,7 @@ export default function Dashboard() {
       </div>
 
       <div
-        className="bg-white rounded-lg shadow-2xl p-4 cursor-copy"
+        className="bg-white hover:-translate-y-1 transition-transform shadow border border-gray-200 rounded-lg max-w-sm p-4 cursor-copy"
         onClick={() => {
           setCopy(true);
           navigator.clipboard.writeText(
