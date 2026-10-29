@@ -1,6 +1,7 @@
 import { Drawer } from "@/components/dashboard/layouts/Drawer";
 import DrawerContext, { useDrawer } from "@/contexts/OpenDrawer";
 import { useProfile } from "@/features/dashboard/hooks";
+import { supabase } from "@/lib/supabase";
 import { Avatar, Dropdown, Flex } from "antd";
 import { Menu } from "lucide-react";
 import { Outlet } from "react-router";
@@ -74,6 +75,11 @@ function NavDash() {
               label: "خروج",
             },
           ],
+          onClick: ({ key }) => {
+            if (key === "1") {
+              supabase.auth.signOut();
+            }
+          },
         }}
       >
         <Avatar className="cursor-pointer">🤯</Avatar>

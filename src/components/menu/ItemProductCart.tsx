@@ -17,13 +17,21 @@ export function ItemProductCart({ data }: { data: ProductRowCart }) {
             ملاحظة ليس متوفر حاليا
           </p>
         )}
-        <p className="mt-1 text-xs text-amber-700/60">
-          {/* {data.extra.length > 0 && "أضافة"}{" "} */}
-          {data.extras?.map((e) => e.name).join(" و")}
-        </p>
+
+        {/* {data.extra.length > 0 && "أضافة"}{" "} */}
+        {data.extras
+          ?.map((e) => ({
+            name: e.name,
+            qty: data.extra?.find((q) => q.extraId === e.id)?.qty,
+          }))
+          .map((e, i) => (
+            <p key={i} className="mt-1 text-xs text-amber-700/60">
+              x{NumberAr(e.qty)} {e.name}
+            </p>
+          ))}
 
         <span className="mt-1 block text-sm font-bold text-amber-700">
-          {NumberAr(data?.item?.price)} <small className="font-mono">ج.م</small>
+          {NumberAr(data?.unitPrice)} <small className="font-mono">ج.م</small>
         </span>
       </div>
 

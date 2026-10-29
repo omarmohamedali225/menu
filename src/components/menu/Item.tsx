@@ -8,6 +8,7 @@ import useBack from "@/hooks/useBack";
 import { message } from "antd";
 import { useCartStorage } from "@/hooks/useCartStorage";
 import { NumberAr } from "@/helpers/helper";
+import { Plus } from "lucide-react";
 // import type { CartType } from "@/types/Products";
 
 export default function Item({ product }: { product: ProductWithCategories }) {
@@ -86,7 +87,7 @@ export default function Item({ product }: { product: ProductWithCategories }) {
                 }}
                 className="float-end border-primary border-2 text-[12px] px-1 py-0.5 rounded-lg text-primary cursor-pointer hover:bg-primary hover:text-white transition-colors duration-150"
               >
-                عرض تفاصيل
+                وريني
               </button>
             ) : (
               <button
@@ -102,10 +103,14 @@ export default function Item({ product }: { product: ProductWithCategories }) {
                     extra: [],
                   });
                 }}
-                className="float-end  border-primary border-2 text-[12px] px-1 py-0.5 rounded-lg text-primary cursor-pointer hover:bg-primary hover:text-white transition-colors duration-150"
+                className="float-end w-6 h-6 flex items-center justify-center  border-primary border-2 text-[12px] px-1 py-0.5 rounded-lg text-primary cursor-pointer hover:bg-primary hover:text-white transition-colors duration-150"
               >
-                {exist?.quantity ? "متضاف" : "اضف"} للعربة{" "}
-                <small>{NumberAr(exist?.quantity)}</small>
+                {exist?.quantity ? (
+                  NumberAr(exist?.quantity)
+                ) : (
+                  <Plus size={10} />
+                )}
+                {/* <small>{NumberAr(exist?.quantity)}</small> */}
               </button>
             )}
           </div>

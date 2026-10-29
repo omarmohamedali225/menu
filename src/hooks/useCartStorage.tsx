@@ -30,8 +30,7 @@ export default function StorageCartContext({
 }) {
   const tenantId = useTenantIdwithParams();
   const [data, setData] = useState<CartType[]>(() => loadCart(tenantId!));
-  // const { data: isExsitTenant } = useExistTenant();
-  // console.log(isExsitTenant);
+  
 
   useEffect(() => {
     try {
@@ -41,23 +40,22 @@ export default function StorageCartContext({
     }
   }, [data, tenantId]);
 
-  
-
+  function normalize(extras: { extraId: number; qty: number }[] = []) {
+    return extras
+      .filter((e) => e.qty > 0)
+      .map((e) => `${e.extraId}:${e.qty}`)
+      .sort()
+      .join("|");
+  }
 
   function addItem(item: CartType) {
     setData((prev) => {
-      
       const index = prev.findIndex((p) => {
-        if (p.id !== item.id || p.type !== item.type) return false;
-
-        if (p.extra && item.extra) {
-          return (
-            p.extra.length === item.extra.length &&
-            item.extra.every((i) => p.extra?.includes(i))
-          );
-        }
-
-        return true;
+        return (
+          p.id === item.id &&
+          p.type === item.type &&
+          normalize(p.extra) === normalize(item.extra)
+        );
       });
 
       if (index === -1) {
@@ -68,29 +66,34 @@ export default function StorageCartContext({
         i === index ? { ...p, quantity: p.quantity + item.quantity } : p,
       );
     });
-    // const key = cartKey(tenantId!);
-    // localStorage.setItem(key, JSON.stringify(data));
+
     message.success("تم تحديث العربة");
   }
 
-  
   function deleteItem(item: CartType) {
     setData((prev) => {
+      // const index = prev.findIndex((p) => {
+      //   if (p.id !== item.id || p.type !== item.type) return false;
+
+      //   if (p.extra && item.extra) {
+      //     return (
+      //       p.extra.length === item.extra.length &&
+      //       item.extra.every((i) => p.extra?.includes(i))
+      //     );
+      //   }
+
+      //   return true;
+      // });
       const index = prev.findIndex((p) => {
-        if (p.id !== item.id || p.type !== item.type) return false;
-
-        if (p.extra && item.extra) {
-          return (
-            p.extra.length === item.extra.length &&
-            item.extra.every((i) => p.extra?.includes(i))
-          );
-        }
-
-        return true;
+        return (
+          p.id === item.id &&
+          p.type === item.type &&
+          normalize(p.extra) === normalize(item.extra)
+        );
       });
 
       if (index === -1) {
-        return [...prev, item];
+        return [...prev];
       }
 
       return prev
@@ -99,8 +102,6 @@ export default function StorageCartContext({
         )
         .filter((e) => e.quantity > 0);
     });
-    const key = cartKey(tenantId!);
-    localStorage.setItem(key, JSON.stringify(data));
     message.success("تم تحديث العربة");
   }
 

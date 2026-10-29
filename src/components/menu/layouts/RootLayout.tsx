@@ -32,7 +32,7 @@ export default function RootLayout() {
       <StorageCartContext>
         <Navbar />
         <Cart />
-        <div className="max-w-2xl mx-auto py-3 px-4">
+        <div className="max-w-4xl mx-auto py-3 px-4">
           <Outlet />
         </div>
       </StorageCartContext>

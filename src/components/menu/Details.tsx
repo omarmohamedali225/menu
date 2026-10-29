@@ -5,12 +5,7 @@ import { useCartStorage } from "@/hooks/useCartStorage";
 import { Checkbox, Modal } from "antd";
 import { Star } from "lucide-react";
 import { useState } from "react";
-
-type Fake = {
-  id: number;
-  price: number;
-  name: string;
-};
+import Stepper from "./Stepper";
 
 export default function Details({
   product,
@@ -19,38 +14,45 @@ export default function Details({
   product: ProductWithCategories;
   onclick: () => void;
 }) {
-  const { addItem, data } = useCartStorage();
+  const { addItem } = useCartStorage();
 
   const { price } = product;
-  const [moreAdd, setMoreAdd] = useState<Fake[]>();
   const [quantity, setQuantity] = useState<number>(1);
-  const morePrice = moreAdd?.reduce((val, c) => {
-    const res = val + c.price;
+  const [extrasQty, setExtrasQty] = useState<Record<number, number>>({});
+
+  const availableExtras = product.extras.filter((e) => e.is_available);
+
+  const extrasPrice = availableExtras?.reduce((val, c) => {
+    const res = val + c.price * (extrasQty[c.id] ?? 0); // عشان لو العنصر مش موجود يرجع undefind ف يخلي السعر صفر ميتحسبش معاهم
     return res;
   }, 0);
 
-  let total = Number(price);
+  const total = (Number(price) + extrasPrice) * quantity;
 
-  if (morePrice) {
-    total += morePrice;
-  }
-
-  const isExisting = data.find((e) => e.id === product.id);
-
-  total = total * quantity;
+  // const isExisting = data.find((e) => e.id === product.id);
 
   function handleCart() {
     const res = {
       id: product.id,
       quantity: quantity,
-      extra: moreAdd ? moreAdd.map((e) => e.id) : [],
+      extra: Object.entries(extrasQty).map(([id, qty]) => ({
+        extraId: Number(id),
+        qty,
+      })),
     };
-    console.log(quantity);
     addItem({ ...res, type: "product" });
     onclick();
   }
 
-  const availableExtras = product.extras.filter((e) => e.is_available);
+  function setExtra(id: number, qty: number) {
+    setExtrasQty((prev) => {
+      // const max = Math.min(5, Math.max(0, (prev[id] ?? 0) + delta));
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { [id]: _, ...rest } = prev;
+      return qty > 0 ? { ...prev, [id]: Math.min(5, qty) } : rest;
+    });
+  }
+
   return (
     <Modal
       open
@@ -59,7 +61,6 @@ export default function Details({
       onCancel={onclick}
       footer={() => (
         <div className="flex items-center gap-3 pt-3">
-          {/* الكمية */}
           <div
             onClick={(e) => e.stopPropagation()}
             className="flex shrink-0 items-center gap-1 rounded-full border border-amber-800/30 bg-white p-1"
@@ -85,13 +86,12 @@ export default function Details({
             </button>
           </div>
 
-          {/* زرار الإضافة + الإجمالي */}
           <button
             type="button"
             onClick={handleCart}
             className="flex flex-1 items-center justify-between rounded-full bg-amber-700 px-5 py-3 font-bold text-white transition hover:bg-amber-800 active:scale-[0.98]"
           >
-            <span>{isExisting ? "تعديل السلة" : "أضف للسلة"}</span>
+            <span>أضف للسلة</span>
             <span>{NumberAr(total || 0)} ج.م</span>
           </button>
         </div>
@@ -103,7 +103,6 @@ export default function Details({
       }}
     >
       <div className="flex flex-col gap-4 py-4">
-        {/* الهيدر */}
         <div className="flex flex-col gap-2">
           <span className="w-fit rounded-full bg-amber-100 px-3 py-0.5 text-xs font-bold text-amber-700">
             #{product.categories?.name}
@@ -125,7 +124,6 @@ export default function Details({
           </div>
         </div>
 
-        {/* الإضافات */}
         {availableExtras.length > 0 && (
           <div className="rounded-2xl bg-amber-50/60 p-3">
             <div className="mb-3 flex items-baseline justify-between">
@@ -136,13 +134,21 @@ export default function Details({
             </div>
 
             <Checkbox.Group
-              value={moreAdd}
-              className="flex flex-col gap-2"
-              onChange={(e) => setMoreAdd(e)}
+              value={Object.keys(extrasQty).map(Number)}
+              className="flex w-full flex-col gap-2"
+              onChange={(ids) => {
+                setExtrasQty((prev) => {
+                  const next: Record<number, number> = {};
+                  (ids as number[]).forEach((id) => {
+                    next[id] = prev[id] ?? 1;
+                  });
+                  return next;
+                });
+              }}
             >
               {availableExtras.map((e) => (
                 <Checkbox
-                  value={e}
+                  value={e.id}
                   key={e.id}
                   classNames={{
                     label: "w-full",
@@ -150,10 +156,19 @@ export default function Details({
                   }}
                 >
                   <div className="flex flex-1 items-center justify-between gap-2">
-                    <span className="text-sm">{e.name}</span>
-                    <span className="whitespace-nowrap text-sm font-bold text-amber-700">
-                      +{NumberAr(e.price)} ج.م
-                    </span>
+                    <div className={"flex gap-2"}>
+                      <span className="text-sm">{e.name}</span>
+                      <span className="whitespace-nowrap text-sm font-bold text-amber-700">
+                        +{NumberAr(e.price)} ج.م
+                      </span>
+                    </div>
+                    {extrasQty[e.id] > 0 && (
+                      <Stepper
+                        value={extrasQty[e.id]}
+                        onInc={() => setExtra(e.id, extrasQty[e.id] + 1)}
+                        onDec={() => setExtra(e.id, extrasQty[e.id] - 1)}
+                      />
+                    )}
                   </div>
                 </Checkbox>
               ))}

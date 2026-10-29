@@ -38,10 +38,10 @@ export default function Navbar() {
           <div className="space-x-1 flex">
             {/* <Button text={t("btnChangeLocal")} onClick={handleLocal} /> */}
             <button
-              className="relative p-2 bg-white rounded-full"
+              className="relative p-2 rounded-full"
               onClick={handlerOpen}
             >
-              <ShoppingCart size={15} />
+              <ShoppingCart size={20} className="text-primary" />
               {data.length > 0 && (
                 <span className="absolute -top-2 ltr:-right-2 rtl:-left-2 bg-amber-900 text-amber-100 p-1 rounded-full min-w-5 h-5 text-[10px] flex justify-center items-center border border-amber-50">
                   {NumberAr(data.length)}

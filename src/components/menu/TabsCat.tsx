@@ -67,7 +67,6 @@ export default function TabsCat() {
       };
     });
 
-
   function HandleTapClick(key: string) {
     setActiveId(key);
     isClickScrolling.current = true;
@@ -87,10 +86,11 @@ export default function TabsCat() {
           classNames={{
             indicator: "hidden",
             header: "mb-0!",
-            item: "[&.ant-tabs-tab-active_.ant-tabs-tab-btn]:bg-primary! [&.ant-tabs-tab-active_.ant-tabs-tab-btn]:text-main! [&_.ant-tabs-tab-btn]:p-2 [&_.ant-tabs-tab-btn]:rounded-xl",
+            item: "[&_.ant-tabs-tab-btn]:bg-white! [&_.ant-tabs-tab-btn]:text-primary! [&.ant-tabs-tab-active_.ant-tabs-tab-btn]:bg-[#B5122B]! [&.ant-tabs-tab-active_.ant-tabs-tab-btn]:text-white! [&_.ant-tabs-tab-btn]:p-2 [&_.ant-tabs-tab-btn]:rounded-xl",
           }}
         />
       )}
     </div>
   );
 }
+

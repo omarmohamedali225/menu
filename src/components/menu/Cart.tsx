@@ -46,15 +46,19 @@ export default function Cart() {
       const item = menu?.find((m) => m.id === c.id);
 
       const extras = (c.extra ?? []).flatMap((e) => {
-        const found = item?.extras.find((i: { id: number }) => e === i.id);
+        const found = item?.extras.find(
+          (i: { id: number }) => e.extraId === i.id,
+        );
         return found ? [found] : [];
       });
-      const priceExtra = extras.reduce((c, p) => {
-        const acc = c + p.price;
+      const priceExtra = extras.reduce((val, p) => {
+        const qty = c?.extra?.find((q) => q.extraId === p.id)?.qty ?? 1;
+        const acc = val + p.price * qty;
         return acc;
       }, 0);
+      const unitPrice = Number(item?.price) + priceExtra;
       const price = (Number(item?.price) + priceExtra) * c.quantity;
-      return { ...c, type: "product", item: item, price, extras };
+      return { ...c, type: "product", item: item, price, unitPrice, extras };
     }
     // offer
     const item = offer?.find((m) => m.id === c.id);
@@ -71,55 +75,45 @@ export default function Cart() {
   function handleOrder(val: { name: string; address: string; note: string }) {
     const { name, address, note } = val;
 
-    const product: ProductRowCart[] = data.filter((e) => e.type === "product");
-    const offers: OfferRowCart[] = data.filter((e) => e.type === "offer");
+const products: ProductRowCart[] = data.filter((e) => e.type === "product");
+const offers: OfferRowCart[] = data.filter((e) => e.type === "offer");
 
-    const entries = [
-      ...offers.map((o) => ({
-        name: o.item?.title,
-        qty: o.quantity,
-        price: o.price,
-        detail: o.item?.description ?? "",
-      })),
-      ...product.map((p) => ({
-        name: p.item?.name,
-        qty: p.quantity,
-        price: p.price,
-        detail:
-          p.extras.length > 0
-            ? `إضافات: ${p.extras.map((e) => e.name).join("، ")}`
-            : "",
-      })),
-    ];
+const entries = [
+  ...offers.map((o) => ({
+    name: o.item?.title,
+    qty: o.quantity,
+    price: o.price,
+    detail: "",
+  })),
+  ...products.map((p) => ({
+    name: p.item?.name,
+    qty: p.quantity,
+    price: p.price,
+    detail: p.extras
+      .map((e) => {
+        const qty = p.extra?.find((q) => q.extraId === e.id)?.qty;
+        return `${NumberAr(qty)} ${e.name}`;
+      })
+      .join("، "),
+  })),
+];
 
-    const rows = entries
-      .map(
-        (r) =>
-          `*${r.name}* (×${r.qty})\n` +
-          (r.detail ? `_${r.detail}_\n` : "") +
-          `${r.price} جنيه`,
-      )
-      .join("\n\n");
+const rows = entries
+  .map(
+    (r) =>
+      `• *${r.name}* ×${r.qty} — ${r.price} جنيه` +
+      (r.detail ? `\n   _+ ${r.detail}_` : ""),
+  )
+  .join("\n");
 
-
-    const customerInfo =
-      `*الاسم:* ${name}\n` +
-      `*العنوان:* ${address}` +
-      (note?.trim() ? `\n*ملاحظة:* ${note.trim()}` : "");
-
-    const message = `*طلب جديد*
-
-${customerInfo}
-
-─────────────
-${rows}
-
-─────────────
-*الإجمالي: ${totalPrice} جنيه*
-
-نرجو تأكيد العنوان لنوافيكم بتكلفة التوصيل ووقت الاستلام المتوقع.
-
-شكرًا لثقتكم بنا.`;
+const message =
+  `*طلب جديد*\n\n` +
+  `*الاسم:* ${name}\n` +
+  `*العنوان:* ${address}\n` +
+  (note?.trim() ? `*ملاحظة:* ${note.trim()}\n` : "") +
+  `\n${rows}\n\n` +
+  `*الإجمالي: ${totalPrice} جنيه*\n\n` +
+  `نرجو تأكيد العنوان وتكلفة التوصيل. شكرًا لكم 🌷`;
     const phone = "+2" + profile?.phone;
     const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
     window.open(url, "_blank");

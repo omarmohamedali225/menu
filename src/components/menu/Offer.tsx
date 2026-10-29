@@ -3,6 +3,7 @@ import { motion } from "motion/react";
 import { useCartStorage } from "@/hooks/useCartStorage";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { NumberAr } from "@/helpers/helper";
+import { ArrowLeft } from "lucide-react";
 export default function Offer() {
   const { data, isLoading } = useOffer();
   const { addItem } = useCartStorage();
@@ -74,29 +75,25 @@ export default function Offer() {
               data-index={i}
               className={`${offers.length > 1 ? "w-[90%]" : "w-full"} shrink-0 snap-start relative`}
             >
-              {/* <img
-              src="/offer1.png"
-              className="w-full object-cover aspect-8/3 max-h-64"
-              alt="Offer"
-            /> */}
-              <div className="w-full aspect-8/3 p-2 max-h-64 bg-primary text-white">
-                <h1 className="text-mute">عرض حصري</h1>
-                <div className="text-left">
-                  <h2 className="text-xl font-bold ">{e.title}</h2>
-                  <h3>{e.description}</h3>
-                  <p>
+              <div className="flex flex-col w-full aspect-8/3 p-2 max-h-64 bg-primary text-white">
+                <p className="text-[#BCA79D] text-sm">عرض الاسبوع</p>
+                <h1 className="text-xl font-bold mt-1">{e.title}</h1>
+                <h2 className="my-2">{e.description}</h2>
+                <div className="flex justify-between mt-auto">
+                  <h3 className="font-bold mt-auto mb-4">
                     بسعر <b>{NumberAr(e.price)} ج.م</b>{" "}
-                  </p>
+                  </h3>
+                  <button
+                    onClick={() =>
+                      addItem({ id: e.id, quantity: 1, type: "offer" })
+                    }
+                    className="py-2 flex px-3 cursor-pointer mt-auto bg-white text-primary rounded-2xl "
+                  >
+                    اطلب دلوقتي
+                    <ArrowLeft />
+                  </button>
                 </div>
               </div>
-              <button
-                onClick={() =>
-                  addItem({ id: e.id, quantity: 1, type: "offer" })
-                }
-                className="py-1 px-2 cursor-pointer bg-primary text-white rounded absolute bottom-2 right-2"
-              >
-                اطلب دلوقتي
-              </button>
             </div>
           ))}
         </div>
