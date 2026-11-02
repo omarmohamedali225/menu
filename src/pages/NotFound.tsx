@@ -7,7 +7,6 @@ export default function NotFound() {
       className="flex min-h-screen items-center justify-center bg-gray-50 px-4 dark:bg-gray-950"
     >
       <div className="w-full max-w-md rounded-2xl bg-white p-8 text-center shadow-lg ring-1 ring-gray-100 dark:bg-gray-900 dark:ring-gray-800">
-        {/* الأيقونة */}
         <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-amber-50 dark:bg-amber-500/10">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -40,13 +39,6 @@ export default function NotFound() {
           >
             الرئيسية
           </Link>
-          <button
-            type="button"
-            onClick={() => window.history.back()}
-            className="rounded-xl border border-gray-200 px-6 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
-          >
-            رجوع
-          </button>
         </div>
       </div>
     </main>

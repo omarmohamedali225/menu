@@ -294,10 +294,10 @@ export function useRemoveExtra() {
 
   return useMutation({
     mutationFn: (id: number) => removeExtra(id),
-    onError: () => message.error("العرض متمسحش"),
+    onError: () => message.error("الاضافة متمسحش"),
     onSuccess: async () => {
       await qc.invalidateQueries({ queryKey: ["extras", tenantId] });
-      message.success("تمت مسح العرض بنجاح");
+      message.success("تمت مسح الاضافة بنجاح");
     },
   });
 }

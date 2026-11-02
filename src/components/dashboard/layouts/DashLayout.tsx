@@ -4,6 +4,7 @@ import { useProfile } from "@/features/dashboard/hooks";
 import { supabase } from "@/lib/supabase";
 import { Avatar, Dropdown, Flex } from "antd";
 import { Menu } from "lucide-react";
+import { useEffect } from "react";
 import { Outlet } from "react-router";
 
 export default function DashLayout() {
@@ -21,22 +22,13 @@ export default function DashLayout() {
   );
 }
 
-// function subscribe(cb: () => void) {
-//   window.addEventListener("online", cb);
-//   window.addEventListener("offline", cb);
-//   return () => {
-//     window.removeEventListener("online", cb);
-//     window.removeEventListener("offline", cb);
-//   };
-// }
-// function getSnapshot() {
-//   return navigator.onLine;
-// }
-
 function NavDash() {
   const { handlerOpen } = useDrawer();
-  // const isOnline = useSyncExternalStore(subscribe, getSnapshot);
   const { data } = useProfile();
+  useEffect(() => {
+    if (!data) return;
+    document.title = "منيو" + " | " + data?.name;
+  }, [data]);
   return (
     <div className="fixed top-0 w-[calc(100%-240px)] max-md:w-full! z-10 bg-white p-5 flex items-center justify-between border-b-2 border-b-gray-100">
       <div className="flex gap-2">

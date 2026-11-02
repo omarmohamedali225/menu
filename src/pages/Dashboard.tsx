@@ -94,66 +94,17 @@ export default function Dashboard() {
   ]);
 
   const { data: profile } = useProfile();
-  const { mutate: updateProfile, isPending: loadUpdateProfile } =
-    useUpdateProfile();
+
   const [copy, setCopy] = useState(false);
 
   const isActive = profile?.name !== null && profile?.phone !== null;
 
-  if (!isActive) {
-    return (
-      <div className="flex p-5! flex-col bg-white hover:-translate-y-1 transition-transform rounded-lg shadow border border-gray-200">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-[12px] text-mute">كمل خطوات تفعيل المنيو</h1>
-            <h2 className="text-2xl font-bold text-primary"></h2>
-            <Form
-              layout="vertical"
-              className="mt-4!"
-              initialValues={{
-                name: profile.name ?? "",
-                phone: profile.phone ?? "",
-              }}
-              onFinish={(val) => {
-                updateProfile({ name: val.name, phone: val.phone });
-              }}
-            >
-              <Form.Item
-                label={"اسم المنيو"}
-                name={"name"}
-                rules={[{ required: true, message: "مطلوب" }]}
-                extra="ده هيظهر للمستخدم كعنوان خاص بيك"
-              >
-                <Input placeholder="المستعار" />
-              </Form.Item>
-              <Form.Item
-                label={"رقم الهاتف"}
-                name="phone"
-                rules={[{ required: true, message: "مطلوب" }]}
-                extra="رقم الهاتف بنستخدمه عشان نحول العملاء للواتس اب الخاص بيك"
-              >
-                <Input placeholder="01*" />
-              </Form.Item>
-              <Button htmlType="submit" disabled={loadUpdateProfile}>
-                تفعيل
-                {loadUpdateProfile && (
-                  <span className="w-4 h-4 border-2 border-l-transparent block rounded-full animate-spin"></span>
-                )}
-              </Button>
-            </Form>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
+  if (!isActive) <ActivateProfileForm />;
   return (
     <div className="p-4 space-y-10">
       <div className="flex items-center justify-between mt-4">
         <div>
-          <h1 className="text-xl font-semibold text-primary">
-            مرحبا بك
-          </h1>
+          <h1 className="text-xl font-semibold text-primary">مرحبا بك</h1>
           <h2 className="text-xs mt-1 text-mute">
             دي نظره سريعه علي نشاط متجرك واداره المنيو الخاص بيك 🤗.
           </h2>
@@ -185,6 +136,56 @@ export default function Dashboard() {
         <p className="text-[11px] mt-2">
           {window.location.origin}/{profile?.id}
         </p>
+      </div>
+    </div>
+  );
+}
+
+function ActivateProfileForm() {
+  const { data: profile } = useProfile();
+  const { mutate: updateProfile, isPending: loadUpdateProfile } =
+    useUpdateProfile();
+  return (
+    <div className="flex p-5! flex-col bg-white hover:-translate-y-1 transition-transform rounded-lg shadow border border-gray-200">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-[12px] text-mute">كمل خطوات تفعيل المنيو</h1>
+          <h2 className="text-2xl font-bold text-primary"></h2>
+          <Form
+            layout="vertical"
+            className="mt-4!"
+            initialValues={{
+              name: profile?.name ?? "",
+              phone: profile?.phone ?? "",
+            }}
+            onFinish={(val) => {
+              updateProfile({ name: val.name, phone: val.phone });
+            }}
+          >
+            <Form.Item
+              label={"اسم المنيو"}
+              name={"name"}
+              rules={[{ required: true, message: "مطلوب" }]}
+              extra="ده هيظهر للمستخدم كعنوان خاص بيك"
+            >
+              <Input placeholder="المستعار" />
+            </Form.Item>
+            <Form.Item
+              label={"رقم الهاتف"}
+              name="phone"
+              rules={[{ required: true, message: "مطلوب" }]}
+              extra="رقم الهاتف بنستخدمه عشان نحول العملاء للواتس اب الخاص بيك"
+            >
+              <Input placeholder="01*" />
+            </Form.Item>
+            <Button htmlType="submit" disabled={loadUpdateProfile}>
+              تفعيل
+              {loadUpdateProfile && (
+                <span className="w-4 h-4 border-2 border-l-transparent block rounded-full animate-spin"></span>
+              )}
+            </Button>
+          </Form>
+        </div>
       </div>
     </div>
   );
