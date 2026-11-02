@@ -3,11 +3,17 @@ import Navbar from "@/components/menu/layouts/Navbar";
 import CartContext from "@/contexts/CartContext";
 import { Outlet } from "react-router";
 import StorageCartContext from "@/hooks/useCartStorage";
-import { useExistTenant } from "@/features/menu/hooks";
+import { useExistTenant, useProfile } from "@/features/menu/hooks";
+import { useEffect } from "react";
 
 export default function RootLayout() {
   const { data, isError, isLoading } = useExistTenant();
-  
+  const { data: profile } = useProfile();
+  useEffect(() => {
+    if (!profile) return;
+    document.title = "منيو" + " | " + profile?.name;
+  }, [profile]);
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center gap-1 justify-center px-4">
@@ -24,8 +30,6 @@ export default function RootLayout() {
       </div>
     );
   }
-
-
 
   return (
     <CartContext>
