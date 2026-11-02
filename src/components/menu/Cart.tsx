@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { X, ShoppingBag, MessageCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useCartStorage } from "@/hooks/useCartStorage";
-import { useMenu, useOffer, useProfile } from "@/features/menu/hooks";
+import { useMenu, useOffer, useOrder, useProfile } from "@/features/menu/hooks";
 import type { OfferRowCart, ProductRowCart } from "@/types/Products";
 import { ItemOfferCart } from "./ItemOfferCart";
 import { ItemProductCart } from "./ItemProductCart";
@@ -17,8 +17,8 @@ export default function Cart() {
   const { handlerClose, open } = useCart();
   const { data: cartData } = useCartStorage();
   const [order, setOrder] = useState(false);
+  const { mutate: mutateOrder, isPending: loadOrder } = useOrder();
   const { data: profile } = useProfile();
-
   const { data: menu } = useMenu();
   const { data: offer } = useOffer();
 
@@ -72,53 +72,93 @@ export default function Cart() {
     return acc;
   }, 0);
 
-  function handleOrder(val: { name: string; address: string; note: string }) {
-    const { name, address, note } = val;
+  async function handleOrder(val: {
+    name: string;
+    address: string;
+    note: string;
+    phone: number;
+  }) {
+    const { name, address, note, phone } = val;
 
-const products: ProductRowCart[] = data.filter((e) => e.type === "product");
-const offers: OfferRowCart[] = data.filter((e) => e.type === "offer");
+    const products: ProductRowCart[] = data.filter((e) => e.type === "product");
+    const offers: OfferRowCart[] = data.filter((e) => e.type === "offer");
 
-const entries = [
-  ...offers.map((o) => ({
-    name: o.item?.title,
-    qty: o.quantity,
-    price: o.price,
-    detail: "",
-  })),
-  ...products.map((p) => ({
-    name: p.item?.name,
-    qty: p.quantity,
-    price: p.price,
-    detail: p.extras
-      .map((e) => {
-        const qty = p.extra?.find((q) => q.extraId === e.id)?.qty;
-        return `${NumberAr(qty)} ${e.name}`;
-      })
-      .join("، "),
-  })),
-];
+    const entries = [
+      ...offers.map((o) => ({
+        kind: "offer",
+        name: o.item?.title,
+        qty: o.quantity,
+        price: o.price,
+        extras: "",
+        detail: o.item?.description ?? "",
+      })),
+      ...products.map((p) => ({
+        kind: "product",
+        name: p.item?.name,
+        qty: p.quantity,
+        price: p.price,
+        extras: p.extras
+          .map((e) => {
+            const qty = p.extra?.find((q) => q.extraId === e.id)?.qty;
+            return `${NumberAr(qty)} ${e.name}`;
+          })
+          .join("، "),
+        detail: "",
+      })),
+    ];
 
-const rows = entries
-  .map(
-    (r) =>
-      `• *${r.name}* ×${r.qty} — ${r.price} جنيه` +
-      (r.detail ? `\n   _+ ${r.detail}_` : ""),
-  )
-  .join("\n");
+    mutateOrder(
+      {
+        p_address: address,
+        p_customer: name,
+        p_note: note,
+        p_phone: String(phone),
+        p_items: entries,
+        p_tenant_id: '',
+      },
+      {
+        onError: () => {
+          Modal.error({
+            title: "حصل خطأ يا" + name,
+            centered: true,
+            okText: "جرب تاني",
+          });
+        },
+        onSuccess: () => {
+          Modal.success({
+            title: "تم عمل اوردرك بنجاح يا" + name,
+            centered: true,
+            okText: "تمام",
+            onOk: () => {
+              localStorage.removeItem(`cart:${profile?.id}`);
+              window.location.reload();
+            },
+          });
+        },
+      },
+    );
 
-const message =
-  `*طلب جديد*\n\n` +
-  `*الاسم:* ${name}\n` +
-  `*العنوان:* ${address}\n` +
-  (note?.trim() ? `*ملاحظة:* ${note.trim()}\n` : "") +
-  `\n${rows}\n\n` +
-  `*الإجمالي: ${totalPrice} جنيه*\n\n` +
-  `نرجو تأكيد العنوان وتكلفة التوصيل. شكرًا لكم 🌷`;
-    const phone = "+2" + profile?.phone;
-    const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-    window.open(url, "_blank");
-    localStorage.removeItem(`cart:${profile?.id}`);
-    window.location.reload();
+    // const rows = entries
+    //   .map(
+    //     (r) =>
+    //       `• *${r.name}* ×${r.qty} — ${r.price} جنيه` +
+    //       (r.detail ? `\n   _+ ${r.detail}_` : ""),
+    //   )
+    //   .join("\n");
+
+    // const message =
+    //   `*طلب جديد*\n\n` +
+    //   `*الاسم:* ${name}\n` +
+    //   `*العنوان:* ${address}\n` +
+    //   (note?.trim() ? `*ملاحظة:* ${note.trim()}\n` : "") +
+    //   `\n${rows}\n\n` +
+    //   `*الإجمالي: ${totalPrice} جنيه*\n\n` +
+    //   `نرجو تأكيد العنوان وتكلفة التوصيل. شكرًا لكم 🌷`;
+    // const phone = "+2" + profile?.phone;
+    // const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+    // window.open(url, "_blank");
+    // localStorage.removeItem(`cart:${profile?.id}`);
+    // window.location.reload();
   }
 
   return (
@@ -269,7 +309,7 @@ const message =
             handleOrder(val);
           }}
           layout="vertical"
-          initialValues={{ name: "", address: "", note: "" }}
+          initialValues={{ name: "", phone: "", address: "", note: "" }}
         >
           <Form.Item
             label={"اسمك"}
@@ -282,6 +322,18 @@ const message =
             ]}
           >
             <Input placeholder="اكتب اسمك هنا" id="name" />
+          </Form.Item>
+          <Form.Item
+            label={"رقمك"}
+            name={"phone"}
+            rules={[
+              {
+                required: true,
+                message: "الرقم مطلوب",
+              },
+            ]}
+          >
+            <Input type={"number"} placeholder="اكتب رقمك هنا" id="phone" />
           </Form.Item>
           <Form.Item
             label={"عنوانك"}
@@ -306,6 +358,7 @@ const message =
             <TextArea placeholder="لو فيه اي ملاحظة مع الطلب" id="note" />
           </Form.Item>
           <button
+            disabled={loadOrder}
             type="submit"
             className="
                   mt-4
@@ -322,8 +375,7 @@ const message =
                 "
           >
             <MessageCircle size={19} />
-
-            <span>اطلب وتابع ع الواتس</span>
+            {loadOrder ? <span>بيتم عمل اوردر</span> : <span>اطلب وتابع</span>}
           </button>
         </Form>
       </Modal>

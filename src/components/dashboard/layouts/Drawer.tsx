@@ -35,6 +35,13 @@ const pages = [
   },
   {
     id: 5,
+    url: "/dashboard/orders",
+    slug: "extras",
+    title: "الاوردرات",
+    icon: <PlusCircle />,
+  },
+  {
+    id: 6,
     url: "/dashboard/offers",
     slug: "offers",
     title: "العروض",

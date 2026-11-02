@@ -55,6 +55,22 @@ export async function fetchOffers(tenantId: string) {
   return data;
 }
 
+const orders = (tenantId: string) =>
+  supabase
+    .from("orders")
+    .select("*")
+    .eq("tenant_id", tenantId)
+    .order("id", { ascending: true });
+
+export type OrdersTypeApi = QueryData<ReturnType<typeof orders>>[number];
+
+
+export async function fetchOrders(tenantId: string) {
+  const { data, error } = await orders(tenantId);
+  if (error) throw error;
+  return data;
+}
+
 // extras
 const extras = (tenantId: string) =>
   supabase

@@ -25,6 +25,11 @@ export type TypeInsertCategory =
   Database["public"]["Tables"]["categories"]["Insert"];
 export type TypeInsertExtra = Database["public"]["Tables"]["extras"]["Insert"];
 
+
+
+export type CreateOrderArgs =
+  Database["public"]["Functions"]["create_order"]["Args"]
+
 export interface CartType {
   type: "product" | "offer";
   id: number;
