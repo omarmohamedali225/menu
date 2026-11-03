@@ -59,7 +59,7 @@ export default function Offer() {
       autoplay={{ dotDuration: true }}
       autoplaySpeed={4000}
       rtl={false}
-      responsive={[{ breakpoint: 600, settings: { slidesToShow: 1 } }]}
+      responsive={[{ breakpoint: 768, settings: { slidesToShow: 1 } }]}
     >
       {offers.map((e, i) => (
         <div
