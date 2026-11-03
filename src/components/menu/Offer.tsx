@@ -55,11 +55,14 @@ export default function Offer() {
   }
   return (
     <Carousel
-      slidesToShow={2}
+      slidesToShow={1}
       autoplay={{ dotDuration: true }}
       autoplaySpeed={4000}
       rtl={false}
-      responsive={[{ breakpoint: 768, settings: { slidesToShow: 1 } }]}
+      responsive={[
+        { breakpoint: 1024, settings: { slidesToShow: 2 } },
+        { breakpoint: 768, settings: { slidesToShow: 1 } },
+      ]}
     >
       {offers.map((e, i) => (
         <div
