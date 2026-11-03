@@ -1,6 +1,5 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import {
-  createOrder,
   fetchCategories,
   fetchExtras,
   fetchMenu,
@@ -9,7 +8,6 @@ import {
   fetchTenantExists,
 } from "./api";
 import useTenantIdwithParams from "@/hooks/useTenantIdwithParams";
-import type { CreateOrderArgs } from "@/types/Products";
 
 export function useMenu() {
   const tenantId = useTenantIdwithParams();
@@ -73,10 +71,10 @@ export function useProfile() {
     enabled: !!tenantId,
   });
 }
-export function useOrder() {
-  const tenantId = useTenantIdwithParams();
-  return useMutation({
-    mutationFn: (data: CreateOrderArgs) =>
-      createOrder({ ...data, p_tenant_id: tenantId! }),
-  });
-}
+// export function useOrder() {
+//   const tenantId = useTenantIdwithParams();
+//   return useMutation({
+//     mutationFn: (data: CreateOrderArgs) =>
+//       createOrder({ ...data, p_tenant_id: tenantId! }),
+//   });
+// }

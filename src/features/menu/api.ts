@@ -1,5 +1,4 @@
 import { supabase } from "@/lib/supabase";
-import type { CreateOrderArgs } from "@/types/Products";
 import type { QueryData } from "@supabase/supabase-js";
 
 const products = (tenantId: string) =>
@@ -84,8 +83,8 @@ export async function fetchProfile(userId: string) {
   return data;
 }
 
-export async function createOrder(data: CreateOrderArgs) {
-  const { data:order, error } = await supabase.rpc("create_order", data);
-  if (error) throw error;
-  return order;
-}
+// export async function createOrder(data: CreateOrderArgs) {
+//   const { data:order, error } = await supabase.rpc("create_order", data);
+//   if (error) throw error;
+//   return order;
+// }

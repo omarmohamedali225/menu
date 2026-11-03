@@ -12,7 +12,6 @@ import Offers from "@/pages/Offers";
 import Products from "@/pages/Products";
 import { createBrowserRouter } from "react-router";
 import NotFound from "@/pages/NotFound";
-import Orders from "@/pages/Orders";
 
 export const router = createBrowserRouter([
   {
@@ -32,7 +31,6 @@ export const router = createBrowserRouter([
           { path: "categories", Component: Categories },
           { path: "extras", Component: Extras },
           { path: "offers", Component: Offers },
-          { path: "orders", Component: Orders },
         ],
       },
     ],

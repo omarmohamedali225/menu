@@ -9,7 +9,6 @@ import {
   fetchExtras,
   fetchMenu,
   fetchOffers,
-  fetchOrders,
   fetchProfile,
   removeCategory,
   removeExtra,
@@ -71,15 +70,15 @@ export function useExtras() {
     enabled: !!tenantId,
   });
 }
-export function useOrder() {
-  const tenantId = useTenantId();
-  return useQuery({
-    queryKey: ["orders", tenantId],
-    queryFn: () => fetchOrders(tenantId),
-    staleTime: 60 * 60 * 1000,
-    enabled: !!tenantId,
-  });
-}
+// export function useOrder() {
+//   const tenantId = useTenantId();
+//   return useQuery({
+//     queryKey: ["orders", tenantId],
+//     queryFn: () => fetchOrders(tenantId),
+//     staleTime: 60 * 60 * 1000,
+//     enabled: !!tenantId,
+//   });
+// }
 export function useProfile() {
   const tenantId = useTenantId();
   return useQuery({
