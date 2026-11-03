@@ -45,3 +45,11 @@
 .card:hover::before {
   opacity: 1;
 }
+
+.ant-carousel {
+  @apply bg-primary pb-4 rounded-xl;
+}
+
+.slick-dots.slick-dots-bottom {
+  bottom: -10px;
+}

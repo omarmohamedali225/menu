@@ -87,7 +87,7 @@ export default function Item({ product }: { product: ProductWithCategories }) {
                 }}
                 className="float-end border-primary border-2 text-[12px] px-1 py-0.5 rounded-lg text-primary cursor-pointer hover:bg-primary hover:text-white transition-colors duration-150"
               >
-                وريني
+                اختر
               </button>
             ) : (
               <button
