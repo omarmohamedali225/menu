@@ -1,77 +1,151 @@
-# React + TypeScript + Vite
+# 🍽️ Menu – Multi-Tenant Restaurant Management Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern restaurant menu and ordering platform designed to help restaurants manage their digital menus, products, categories, offers, and customer orders through a dedicated dashboard.
 
-Currently, two official plugins are available:
+The platform is built with a **multi-tenant architecture**, allowing multiple restaurants to manage their own menus and data independently while providing customers with a seamless online ordering experience.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## ✨ Features
 
-## React Compiler
+### 🛍️ Customer Menu
+- Dynamic restaurant menus.
+- Browse products by categories.
+- Search and explore menu items.
+- Product details with customizable options.
+- Support for different product sizes and prices.
+- Additional extras and add-ons.
+- Shopping cart with quantity management.
+- Support for customized cart items.
+- Order submission through WhatsApp.
+- Responsive design for mobile and desktop.
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+### 📊 Restaurant Dashboard
+- Manage restaurant products (Create, Read, Update, Delete).
+- Manage product categories.
+- Manage extras and add-ons.
+- Create and manage promotional offers.
+- Control product availability and publishing status.
+- View and manage customer orders.
+- Track order status.
+- View complete order information, including customer details, address, phone number, and order notes.
 
-Note: This will impact Vite dev & build performances.
+### 🏢 Multi-Tenant Architecture
+- Independent data for each restaurant.
+- Tenant-based data isolation.
+- Restaurant-specific dashboard access.
+- Public access to published menu items.
+- Secure database access using Supabase Row Level Security (RLS).
 
-## Expanding the ESLint configuration
+### 🛒 Cart & Ordering System
+- Add products and offers to the cart.
+- Customize products with sizes and extras.
+- Automatically calculate item prices.
+- Maintain separate cart items when product configurations differ.
+- Manage quantities and order details.
+- Prepare orders for WhatsApp submission.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🛠️ Tech Stack
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+| Technology | Purpose |
+|---|---|
+| React | Frontend development |
+| Vite | Development and build tooling |
+| TypeScript | Type safety |
+| Tailwind CSS | Styling and responsive layouts |
+| Ant Design | UI components |
+| Motion | Animations and transitions |
+| React Router | Application routing |
+| TanStack React Query | Server state and data fetching |
+| Supabase | Backend and database |
+| PostgreSQL | Relational database |
+| Supabase Auth | Authentication |
+| Supabase RLS | Database security |
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## 🏗️ Architecture
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+The application separates customer-facing functionality from restaurant management.
 
+**Customer Application**
+- Accesses the public restaurant menu.
+- Displays published products and offers.
+- Handles product customization and cart operations.
+- Collects customer order information.
+
+**Restaurant Dashboard**
+- Requires authentication.
+- Manages restaurant-specific data.
+- Handles products, categories, extras, offers, and orders.
+
+**Backend**
+- Supabase PostgreSQL database.
+- Tenant-based data relationships.
+- Row Level Security policies.
+- Authentication and authorization.
+
+## 🔐 Security
+
+Database access is controlled through Supabase Row Level Security.
+
+- Authenticated restaurant owners can manage their own data.
+- Tenant isolation prevents access to other restaurants' private data.
+- Public users can access published menu content.
+- Administrative operations require authentication.
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js
+- npm
+- A Supabase account and project
+
+### Installation
+
+Clone the repository:
+
+```bash
+git clone https://github.com/omarmohamedali225/menu.git
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Navigate to the project directory:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```bash
+cd menu
 ```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+### Environment Variables
+
+Create a `.env` file in the root directory:
+
+```env
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+### Run Development Server
+
+```bash
+npm run dev
+```
+
+### Production Build
+
+```bash
+npm run build
+```
+
+## 👨‍💻 Author
+
+**Omar Mohamed Ali**
+
+Frontend Developer
+
+- GitHub: [@omarmohamedali225](https://github.com/omarmohamedali225)
+
+---
+
+⭐ Built with React and Supabase.
