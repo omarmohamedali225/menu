@@ -9,9 +9,9 @@ import {
 } from "lucide-react";
 
 import {
+  useAllMenu,
   useCategories,
   useExtras,
-  useMenu,
   useOffer,
   useProfile,
   useUpdateProfile,
@@ -20,7 +20,7 @@ import { useMemo, useState } from "react";
 import { Button, Form, Input, message } from "antd";
 
 export default function Dashboard() {
-  const { data: menu, isLoading: productsLoad } = useMenu();
+  const { data: menu, isLoading: productsLoad } = useAllMenu();
   const { data: categories, isLoading: categoriesLoad } = useCategories();
   const { data: offers, isLoading: offersLoad } = useOffer();
   const { data: extras, isLoading: extrasLoad } = useExtras();

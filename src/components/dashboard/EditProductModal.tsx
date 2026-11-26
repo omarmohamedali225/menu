@@ -19,9 +19,12 @@ interface Props {
 }
 
 export default function EditProductModal({ product, onClose }: Props) {
-  const { mutate, isPending } = useEdit();
+  const { mutate, isPending,error } = useEdit();
   const [form] = Form.useForm();
   const { data: extras } = useExtras();
+
+
+  console.log(error)
 
   useEffect(() => {
     if (!product) return;
@@ -48,6 +51,17 @@ export default function EditProductModal({ product, onClose }: Props) {
       <Form
         form={form}
         onFinish={(v) => {
+          const currentIds = product?.extra.map((e) => e.id);
+          const newIds = v?.extras.map((e: { value: string }) => e.value);
+          console.log({ currentIds, newIds });
+          if (
+            newIds.length === currentIds?.length &&
+            newIds?.every((e: number, i: number) => Object.is(e, newIds[i]))
+          ) {
+            onClose();
+            return;
+          }
+
           if (product && product.id) {
             mutate(
               {
@@ -62,6 +76,7 @@ export default function EditProductModal({ product, onClose }: Props) {
       >
         <Form.Item name={"extras"} label={"اضافات"}>
           <Select
+            labelInValue
             placeholder="سيبها فاضية لو مش عايز اضافات"
             options={extras?.map((e) => ({
               key: e.id,

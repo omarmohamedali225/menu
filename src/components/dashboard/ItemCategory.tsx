@@ -2,11 +2,11 @@ import { Dropdown, Modal } from "antd";
 import { Ellipsis } from "lucide-react";
 import { useMemo, useState } from "react";
 import AvailableSwitch from "./AvailableSwitch";
-import { useMenu, useRemoveCategory } from "@/features/dashboard/hooks";
+import { useAllMenu, useRemoveCategory } from "@/features/dashboard/hooks";
 import type { TypeCategories } from "@/features/menu/api";
 
 export default function ItemCategory({ data }: { data: TypeCategories }) {
-  const { data: products, isLoading } = useMenu();
+  const { data: products, isLoading } = useAllMenu();
   const [item, setItem] = useState<TypeCategories | null>(null);
   const { mutate: removeCategory, isPending: loadRemove } = useRemoveCategory();
 

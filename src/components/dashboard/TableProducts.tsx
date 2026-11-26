@@ -7,11 +7,14 @@ import {
   useMenu,
   useRemoveProduct,
 } from "@/features/dashboard/hooks";
-import { Dropdown, Input, Select, Table, type TableColumnsType } from "antd";
+import { Dropdown, Table, type TableColumnsType } from "antd";
 import { Ellipsis } from "lucide-react";
-import { useDeferredValue, useMemo, useState } from "react";
+import { useCallback, useDeferredValue, useMemo, useState } from "react";
 import EditProductModal from "./EditProductModal";
 import Spinner from "../Spinner";
+import { EditText, EditCategory, EditStatus } from "./EditTable";
+import InputSearch from "./InputSearch";
+import useDebounce from "@/hooks/useDebounce";
 
 type Type = {
   id: number;
@@ -24,97 +27,105 @@ type Type = {
   is_available: boolean;
 };
 export default function TableProducts() {
-  const [editing, setEditing] = useState<{
-    id: number;
-    field: string;
-  } | null>(null);
+  const [page, setPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(10);
   const { mutate: mutateName, isPending: loadEditName } = useEditName();
   const { mutate: mutatePrice, isPending: loadEditPrice } = useEditPrice();
   const { mutate: mutateCategories, isPending: loadEditCat } =
     useEditCategories();
   const { mutate: mutateAvailable, isPending: loadAvailble } = useAvailable();
-  const { data: menu, isLoading: loadMenu } = useMenu();
-  const { data: categories, isLoading: loadCat } = useCategories();
   const [search, setSearch] = useState("");
+  const debounce = useDebounce(search, 1000);
+  const { data: menu, isLoading: loadMenu } = useMenu(page, pageSize, debounce);
+  const { data: categories, isLoading: loadCat } = useCategories();
   const [selectEdit, setSelectEdit] = useState<Type | null>(null);
 
   const { mutate: removeProduct, isPending: loadRemoveProduct } =
     useRemoveProduct();
 
-  function tableLoad() {
-    return (
-      loadEditName ||
-      loadCat ||
-      loadEditPrice ||
-      loadMenu ||
-      loadEditCat ||
-      loadAvailble ||
-      loadRemoveProduct
-    );
-  }
+  const tableLoad =
+    loadEditName ||
+    loadCat ||
+    loadEditPrice ||
+    loadMenu ||
+    loadEditCat ||
+    loadAvailble ||
+    loadRemoveProduct;
 
   const data = useMemo(() => {
-    return (
-      menu
-        ?.map((m) => ({
-          id: m.id ?? 0,
-          name: m.name ?? "-",
-          category: {
-            id: m?.categories?.id ?? "",
-            name: m?.categories?.name ?? "",
-            isAvailable: m?.categories?.is_available ?? false,
-          },
-          categoryId: m.category_id ?? "-",
-          price: m.price ?? "-",
-          countExtra: m.extras.length ?? 0,
-          extra: m.extras.map((e) => ({ id: e.id, name: e.name })) ?? {
-            id: 0,
-            name: "-",
-          },
-          is_available: m.is_available ?? false,
-        }))
-        .filter((e) => {
-          const n = e.name.includes(search);
-          return n;
-        }) ?? []
-    );
-  }, [menu, search]);
+    return menu?.data?.map((m) => ({
+      id: m.id ?? 0,
+      name: m.name ?? "-",
+      category: {
+        id: m?.categories?.id ?? "",
+        name: m?.categories?.name ?? "",
+        isAvailable: m?.categories?.is_available ?? false,
+      },
+      categoryId: m.category_id ?? "-",
+      price: m.price ?? "-",
+      countExtra: m.extras.length ?? 0,
+      extra: m.extras.map((e) => ({ id: e.id, name: e.name })) ?? {
+        id: 0,
+        name: "-",
+      },
+      is_available: m.is_available ?? false,
+    }));
+  }, [menu]);
 
   type P = NonNullable<typeof data>[number];
 
+  const categoryFilters = useMemo(
+    () =>
+      (categories ?? []).map((e) => ({
+        text: e.name as string,
+        value: e.name as string,
+      })),
+    [categories],
+  );
+
+  const categoryOptions = useMemo(
+    () =>
+      categories?.map((e) => ({
+        value: e.id,
+        label: e.name as string,
+      })) as [],
+    [categories],
+  );
+
+  const onSaveName = useCallback(
+    (p: number, v: string) => {
+      mutateName({ id: p, data: v });
+    },
+    [mutateName],
+  );
+  const onSavePrice = useCallback(
+    (p: number, v: string) => {
+      mutatePrice({ id: p, data: v });
+    },
+    [mutatePrice],
+  );
+  const onSaveCategory = useCallback(
+    (p: number, v: string) => {
+      mutateCategories({ id: p, data: String(v) });
+    },
+    [mutateCategories],
+  );
+  const onSaveAvailable = useCallback(
+    (p: number, v: boolean) => {
+      mutateAvailable({ id: p, bool: v, table: "products" });
+    },
+    [mutateAvailable],
+  );
+
   const columns: TableColumnsType<P> = useMemo(() => {
-    function isEditing(id: number, field: string) {
-      return editing?.id === id && editing.field === field;
-    }
     return [
       {
         title: "اسم الصنف",
         dataIndex: "name",
         key: "name",
-        render: (_: unknown, p: Type) =>
-          isEditing(p.id, "name") ? (
-            <Input
-              defaultValue={p.name}
-              autoFocus
-              onBlur={() => setEditing(null)}
-              onPressEnter={(e) => {
-                const value = e.currentTarget.value.trim();
-                if (value !== "" && value !== p.name) {
-                  mutateName({ id: p.id, data: value });
-                }
-                setEditing(null);
-              }}
-            />
-          ) : (
-            <span
-              onDoubleClick={() => {
-                setEditing({ id: p.id, field: "name" });
-              }}
-              className="select-none block"
-            >
-              {p.name}
-            </span>
-          ),
+        render: (_: unknown, p: Type) => (
+          <EditText id={p.id} type="text" value={p.name} onSave={onSaveName} />
+        ),
       },
       {
         title: "التصنيف",
@@ -126,41 +137,16 @@ export default function TableProducts() {
             ? { background: "#cb2222", color: "wheat" }
             : undefined,
         }),
-        filters: (categories ?? []).map((e) => ({
-          text: e.name as string,
-          value: e.name as string,
-        })),
+        filters: categoryFilters,
         onFilter: (v, r) => r.category.name.includes(String(v)),
-        render: (_, p) =>
-          isEditing(p.id, "category") ? (
-            <Select
-              classNames={{ content: "w-[150px]!" }}
-              defaultValue={p.category}
-              value={p.category}
-              defaultOpen
-              options={categories?.map((e) => ({
-                value: e.id,
-                label: e.name,
-              }))}
-              onBlur={() => setEditing(null)}
-              onChange={(e) => {
-                if (e && String(e) !== String(p.categoryId)) {
-                  mutateCategories({ id: p.id, data: String(e) });
-                }
-                setEditing(null);
-              }}
-              autoFocus
-            />
-          ) : (
-            <span
-              onDoubleClick={() => {
-                setEditing({ id: p.id, field: "category" });
-              }}
-              className="select-none"
-            >
-              {p.category.name}
-            </span>
-          ),
+        render: (_, p) => (
+          <EditCategory
+            categoryId={p.id}
+            categoryName={p.category.name}
+            option={categoryOptions}
+            onSave={onSaveCategory}
+          />
+        ),
       },
       {
         title: "الاضافات",
@@ -184,69 +170,28 @@ export default function TableProducts() {
           { text: "غير متوفر", value: false },
         ],
         onFilter: (v, r) => r.is_available === v,
-        render: (_: unknown, p: Type) =>
-          isEditing(p.id, "status") ? (
-            <Select
-              size="small"
-              classNames={{ content: "w-[150px]!" }}
-              defaultValue={p.is_available}
-              defaultOpen
-              options={[
-                { id: 1, label: "متاح", value: true },
-                { id: 2, label: "غير متوفر", value: false },
-              ]}
-              onBlur={() => setEditing(null)}
-              onChange={(e) => {
-                if (e !== p.is_available) {
-                  mutateAvailable({ id: p.id, bool: e, table: "products" });
-                }
-                setEditing(null);
-              }}
-              autoFocus
-            />
-          ) : (
-            <span
-              onDoubleClick={(e) => {
-                e.preventDefault();
-                setEditing({ id: p.id, field: "status" });
-              }}
-              className={`${p.is_available ? "bg-green-200" : "bg-red-200"} rounded-full select-none px-2 py-.5 text-[11px]`}
-            >
-              {p.is_available ? " متاح " : " غير متاح "}
-            </span>
-          ),
+        render: (_: unknown, p: Type) => (
+          <EditStatus
+            id={p.id}
+            value={p.is_available}
+            onSave={onSaveAvailable}
+          />
+        ),
       },
       {
-        title: "سعره",
+        title: "السعر",
         dataIndex: "price",
         key: "price",
         width: 100,
-        render: (_: unknown, p: Type) =>
-          isEditing(p.id, "price") ? (
-            <Input
-              defaultValue={p.price}
-              type={"number"}
-              autoFocus
-              onBlur={() => setEditing(null)}
-              onPressEnter={(e) => {
-                const value = e.currentTarget.value.trim();
-                if (value !== "" && value !== p.name && !isNaN(Number(value))) {
-                  mutatePrice({ id: p.id, data: value });
-                }
-                setEditing(null);
-              }}
-            />
-          ) : (
-            <span
-              onDoubleClick={(e) => {
-                e.preventDefault();
-                setEditing({ id: p.id, field: "price" });
-              }}
-              className="select-none"
-            >
-              {p.price} ج.م
-            </span>
-          ),
+        render: (_: unknown, p: Type) => (
+          <EditText
+            id={p.id}
+            type="price"
+            value={p.price}
+            suffix={"ج.م"}
+            onSave={onSavePrice}
+          />
+        ),
       },
       {
         title: "",
@@ -278,32 +223,43 @@ export default function TableProducts() {
       },
     ];
   }, [
-    categories,
-    mutateName,
-    mutatePrice,
-    mutateCategories,
-    mutateAvailable,
+    categoryFilters,
+    categoryOptions,
+    onSaveCategory,
+    onSaveName,
+    onSavePrice,
+    onSaveAvailable,
     removeProduct,
-    editing,
   ]);
 
-  // const u = useReady();
-  // const [isPending, start] = useTransition();
+  const onSearch = useCallback((s: string) => {
+    setSearch(s);
+    setPage(1);
+  }, []);
+
   const showTable = useDeferredValue(true, false);
 
   return (
     <>
-      <Input
-        placeholder="بحث باسم الصنف"
-        className="w-50!"
-        onInput={(e) => setSearch(e.currentTarget.value)}
-      />
+      <InputSearch onSearch={onSearch} />
       {showTable ? (
         <Table
           rowKey={"id"}
           columns={columns}
-          pagination={{ pageSize: 8 }}
-          loading={tableLoad()}
+          pagination={{
+            pageSize,
+            current: page,
+            total: menu?.count ?? 0,
+            onChange(p, s) {
+              setPage(p);
+              setPageSize(s);
+            },
+            showSizeChanger: true,
+            pageSizeOptions: [10, 20, 30, 40, 50],
+            locale: { items_per_page: "/ منتجات" },
+            // showTotal: (total, range) => `${range[0]}:${range[1]}من${total}`,
+          }}
+          loading={tableLoad}
           dataSource={data}
           scroll={{ x: "max-content" }}
           size="small"

@@ -1,10 +1,16 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import {
   addCategory,
   addExtra,
   addOffer,
   addProduct,
   edit,
+  fetchAllMenu,
   fetchCategories,
   fetchExtras,
   fetchMenu,
@@ -30,13 +36,24 @@ import type {
 import useTenantId from "@/hooks/useTenantId";
 import { sendTelegram } from "@/helpers/telegram";
 
-export function useMenu() {
+export function useMenu(page: number, pageSize: number, search: string) {
+  const tenantId = useTenantId();
+  return useQuery({
+    queryKey: ["products", tenantId, page, pageSize, search],
+    queryFn: () => fetchMenu(tenantId, page, pageSize, search),
+    staleTime: 60 * 60 * 1000, //cache 1 hour
+    enabled: !!tenantId,
+    placeholderData: keepPreviousData,
+  });
+}
+export function useAllMenu() {
   const tenantId = useTenantId();
   return useQuery({
     queryKey: ["products", tenantId],
-    queryFn: () => fetchMenu(tenantId),
+    queryFn: () => fetchAllMenu(tenantId),
     staleTime: 60 * 60 * 1000, //cache 1 hour
     enabled: !!tenantId,
+    placeholderData: keepPreviousData,
   });
 }
 
@@ -95,7 +112,7 @@ export function useUpdateProfile() {
     mutationFn: ({ name, phone }: { name: string; phone: string }) =>
       updateProfile(tenantId, name, phone),
     onError: () => message.error("حصل خطا جرب تاني"),
-    onSuccess: (_, { name,phone }) => {
+    onSuccess: (_, { name, phone }) => {
       qc.invalidateQueries({ queryKey: ["profile", tenantId] });
       message.success("المنيو جاهز الان");
 
@@ -216,7 +233,7 @@ type TypeEdit = {
   // name: string;
   // categoryId: string;
   // price: string;
-  extras: string[];
+  extras: { value: string }[];
 };
 export function useEdit() {
   const qc = useQueryClient();

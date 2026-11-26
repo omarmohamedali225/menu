@@ -40,7 +40,12 @@ export default function Item({ product }: { product: ProductWithCategories }) {
         initial={{ opacity: 0, y: 10 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        className="bg-white flex flex-col sm:flex-row p-2 rounded-2xl select-none group border border-amber-100 shadow"
+        style={{
+          backgroundColor: !product.is_available
+            ? "oklch(88.5% 0.062 18.334)"
+            : "",
+        }}
+        className="bg-white flex flex-col sm:flex-row p-2 rounded-2xl select-none group border border-primary-100 hover:translate-0.5 transition-transform shadow"
       >
         {/* <div className="relative w-full h-28 sm:w-26 md:h-26 shrink-0 overflow-hidden"> */}
         {/* <img
@@ -66,7 +71,7 @@ export default function Item({ product }: { product: ProductWithCategories }) {
             </p>
           )}
           {!product.is_available && (
-            <span className="bg-red-200 max-w-fit text-red-950 px-2 py-1 text-[10px] rounded">
+            <span className="bg-red-300 max-w-fit text-red-950 px-2 py-1 text-[10px] rounded">
               غير متوفر حاليا
             </span>
           )}
@@ -87,7 +92,7 @@ export default function Item({ product }: { product: ProductWithCategories }) {
                 }}
                 className="float-end border-primary border-2 text-[12px] px-1 py-0.5 rounded-lg text-primary cursor-pointer hover:bg-primary hover:text-white transition-colors duration-150"
               >
-                اختر
+                قم بالاختيار
               </button>
             ) : (
               <button
@@ -103,10 +108,10 @@ export default function Item({ product }: { product: ProductWithCategories }) {
                     extra: [],
                   });
                 }}
-                className="float-end w-6 h-6 flex items-center justify-center  border-primary border-2 text-[12px] px-1 py-0.5 rounded-lg text-primary cursor-pointer hover:bg-primary hover:text-white transition-colors duration-150"
+                className="float-end min-w-6 w-max h-6 flex items-center justify-center  border-primary border-2 text-[12px] px-1 py-0.5 rounded-lg text-primary cursor-pointer hover:bg-primary hover:text-white transition-colors duration-150"
               >
                 {exist?.quantity ? (
-                  NumberAr(exist?.quantity)
+                  "اتضاف منه " + NumberAr(exist?.quantity)
                 ) : (
                   <Plus size={10} />
                 )}

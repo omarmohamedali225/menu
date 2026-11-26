@@ -8,12 +8,26 @@ import type {
 import type { QueryData } from "@supabase/supabase-js";
 import { message } from "antd";
 
-const products = (tenantId: string) =>
-  supabase
+const products = (tenantId: string, from: number, to: number, q: string) => {
+  let query = supabase
+    .from("products")
+    .select("*,categories(*),extras(*)", { count: "estimated" })
+    .eq("tenant_id", tenantId)
+    .order("id", { ascending: false })
+    .range(from, to);
+  if (q) query = query.ilike("name", `%${q}%`);
+
+  return query;
+};
+const allProducts = (tenantId: string) => {
+  const query = supabase
     .from("products")
     .select("*,categories(*),extras(*)")
     .eq("tenant_id", tenantId)
-    .order("id", { ascending: true });
+    .order("id", { ascending: false })
+
+  return query;
+};
 
 const categories = (tenantId: string) =>
   supabase
@@ -28,8 +42,24 @@ export type ProductWithCategories = QueryData<
 
 export type TypeCategories = QueryData<ReturnType<typeof categories>>[number];
 
-export async function fetchMenu(tenantId: string) {
-  const { data, error } = await products(tenantId);
+export async function fetchMenu(
+  tenantId: string,
+  page: number,
+  pageSize: number = 8,
+  search: string = "",
+) {
+  const q = search.trim().replace(/[%,()]/g, "");
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize - 1;
+  const { data, error, count } = await products(tenantId, from, to,q);
+  if (error) throw error;
+  return { data, count };
+}
+export async function fetchAllMenu(
+  tenantId: string
+) {
+
+  const { data, error } = await allProducts(tenantId);
   if (error) throw error;
   return data;
 }
@@ -63,7 +93,6 @@ export async function fetchOffers(tenantId: string) {
 //     .order("id", { ascending: true });
 
 // export type OrdersTypeApi = QueryData<ReturnType<typeof orders>>[number];
-
 
 // export async function fetchOrders(tenantId: string) {
 //   const { data, error } = await orders(tenantId);
@@ -131,7 +160,7 @@ type TypeEdit = {
   // name: string;
   // categoryId: string;
   // price: string;
-  extras: string[];
+  extras: { value: string }[];
 };
 
 export async function edit({ data }: { data: TypeEdit }) {
@@ -149,9 +178,11 @@ export async function edit({ data }: { data: TypeEdit }) {
     .delete()
     .eq("product_id", data.id);
 
+  console.log(data);
+
   const insert = data.extras.map((e) => ({
     product_id: data.id,
-    extra_id: Number(e),
+    extra_id: Number(e.value),
   }));
   const { error: extraErr } = await supabase
     .from("product_extras")
